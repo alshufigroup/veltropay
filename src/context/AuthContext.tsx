@@ -33,8 +33,20 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const queryToken = urlParams.get('token');
+    let activeToken = token;
+
+    if (queryToken) {
+      localStorage.setItem('token', queryToken);
+      setToken(queryToken);
+      activeToken = queryToken;
+      const newUrl = window.location.pathname;
+      window.history.replaceState({}, document.title, newUrl);
+    }
+
     const fetchUser = async () => {
-      if (token) {
+      if (activeToken) {
         try {
           const res = await api.get('/auth/me');
           setUser(res.data);
@@ -47,7 +59,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     };
 
     fetchUser();
-  }, [token]);
+  }, []);
 
   const login = (newToken: string) => {
     localStorage.setItem('token', newToken);
