@@ -1,5 +1,4 @@
 import React, { useState, useContext } from 'react';
-import { Link } from 'react-router-dom';
 import Layout from '../components/Layout/Layout';
 import Divider from '../components/Divider/Divider';
 import { api } from '../api';
