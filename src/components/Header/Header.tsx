@@ -1,15 +1,39 @@
-import { useRef } from 'react';
-
+import React, { useRef, useContext } from 'react';
 import { Link } from 'react-router-dom';
+import { AuthContext } from '../../context/AuthContext';
 
 const Header: React.FC = () => {
   const inputRef = useRef<HTMLInputElement>(null);
+  const { user } = useContext(AuthContext);
+
+  const getInitials = (name?: string) => {
+    if (!name) return 'VP';
+    const parts = name.trim().split(' ');
+    if (parts.length >= 2) {
+      return (parts[0][0] + parts[1][0]).toUpperCase();
+    }
+    return name.substring(0, 2).toUpperCase();
+  };
 
   return (
     <header className='flex flex-v-center flex-space-between'>
       <div className='header-profile flex flex-1'>
-        <Link to='/profile'>
-          <div className='profile-photo' style={{ backgroundImage: 'url("images/profile.jpg")' }} />
+        <Link to='/profile' style={{ textDecoration: 'none' }}>
+          <div 
+            className='profile-photo flex flex-h-center flex-v-center' 
+            style={{ 
+              backgroundColor: '#3182ce', 
+              color: 'white', 
+              fontWeight: 'bold', 
+              fontSize: '1rem',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
+            }}
+          >
+            {getInitials(user?.full_name)}
+          </div>
         </Link>
       </div>
       <div className='header-center'>
