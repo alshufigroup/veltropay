@@ -1,0 +1,48 @@
+import React, { useState } from 'react';
+
+const Login: React.FC = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    // In real app, call API
+    console.log('Login with', email, password);
+    // On success, redirect to account.veltrobridge.xyz
+    window.location.href = 'https://account.veltrobridge.xyz/home';
+  };
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100vh', backgroundColor: '#f0f4f8' }}>
+      <div style={{ padding: '2rem', backgroundColor: 'white', borderRadius: '8px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)' }}>
+        <h1 style={{ marginBottom: '1.5rem', color: '#1a202c', textAlign: 'center' }}>Veltrobridge Login</h1>
+        <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '1rem', width: '300px' }}>
+          <input 
+            type="email" 
+            placeholder="Email" 
+            value={email} 
+            onChange={(e) => setEmail(e.target.value)} 
+            required 
+            style={{ padding: '0.75rem', borderRadius: '4px', border: '1px solid #cbd5e0' }}
+          />
+          <input 
+            type="password" 
+            placeholder="Password" 
+            value={password} 
+            onChange={(e) => setPassword(e.target.value)} 
+            required 
+            style={{ padding: '0.75rem', borderRadius: '4px', border: '1px solid #cbd5e0' }}
+          />
+          <button type="submit" style={{ padding: '0.75rem', backgroundColor: '#3182ce', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}>
+            Log In
+          </button>
+        </form>
+        <p style={{ marginTop: '1rem', textAlign: 'center', fontSize: '0.875rem' }}>
+          Don't have an account? <a href="https://signup.veltrobridge.xyz" style={{ color: '#3182ce' }}>Sign up</a>
+        </p>
+      </div>
+    </div>
+  );
+};
+
+export default Login;
