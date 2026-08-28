@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import Layout from '../components/Layout/Layout';
 import Divider from '../components/Divider/Divider';
 import { api } from '../api';
+import { AuthContext } from '../context/AuthContext';
 
 const Profile: React.FC = () => {
+  const { user, logout } = useContext(AuthContext);
   const [kycFile, setKycFile] = useState<File | null>(null);
   const [kycMessage, setKycMessage] = useState('');
   const [ibanMessage, setIbanMessage] = useState('');
@@ -41,9 +43,9 @@ const Profile: React.FC = () => {
       <h1 className='title'>Profile</h1>
       <div className='account-photo' style={{ backgroundImage: `url("images/profile.jpg")` }} />
       <div className='center'>
-        <h2>Cenk SARI</h2>
+        <h2>{user?.full_name || 'Loading...'}</h2>
         <p className='flex flex-v-center flex-h-center'>
-          @cenksari &nbsp;
+          @{user?.email ? user.email.split('@')[0] : 'username'} &nbsp;
           <span className='material-symbols-outlined'>qr_code</span>
         </p>
       </div>
@@ -88,10 +90,10 @@ const Profile: React.FC = () => {
 
       <Divider />
       <div className='account'>
-        <Link to='/profile' className='flex flex-v-center'>
-          <span className='material-symbols-outlined'>power_settings_new</span>
+        <button onClick={logout} className='flex flex-v-center' style={{ width: '100%', border: 'none', background: 'none', color: '#e53e3e', cursor: 'pointer', padding: '10px', fontSize: '1rem', display: 'flex', alignItems: 'center' }}>
+          <span className='material-symbols-outlined' style={{ marginRight: '15px' }}>power_settings_new</span>
           Sign out
-        </Link>
+        </button>
       </div>
       <Divider />
       <footer className='center no-select'>

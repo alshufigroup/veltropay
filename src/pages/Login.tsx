@@ -23,7 +23,12 @@ const Login: React.FC = () => {
       login(res.data.access_token);
       window.location.href = 'https://account.veltrobridge.xyz/home';
     } catch (err: any) {
-      setError(err.response?.data?.detail || 'Login failed');
+      const errMsg = err.response?.data?.detail;
+      if (errMsg === 'Email not verified') {
+        window.location.href = 'https://login.veltrobridge.xyz/verify?email=' + encodeURIComponent(email);
+      } else {
+        setError(errMsg || 'Login failed');
+      }
     }
   };
 

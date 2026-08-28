@@ -20,7 +20,7 @@ const Signup: React.FC = () => {
         password,
         currency
       });
-      window.location.href = 'https://login.veltrobridge.xyz';
+      window.location.href = 'https://login.veltrobridge.xyz/verify?email=' + encodeURIComponent(email);
     } catch (err: any) {
       setError(err.response?.data?.detail || 'Signup failed');
     } finally {

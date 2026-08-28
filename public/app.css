@@ -695,13 +695,21 @@ footer {
     min-width: 95px;
   }
 
+  .widgets {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+  }
+
   .widgets .widget {
-    width: 110px;
+    width: calc(33.33% - 10px);
+    min-width: 90px;
     height: 110px;
   }
 
   .card {
-    width: 360px;
+    width: 100%;
+    max-width: 360px;
     height: 230px;
     margin: 0 auto;
   }
