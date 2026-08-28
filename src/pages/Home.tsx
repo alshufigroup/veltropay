@@ -34,7 +34,8 @@ const Home: React.FC = () => {
       }
     };
     fetchWallets();
-  }, [isAuthenticated, logout]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isAuthenticated]);
 
   // currency symbols helper
   const getSymbol = (curr: string) => {
