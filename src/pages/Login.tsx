@@ -1,15 +1,30 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
+import { AuthContext } from '../context/AuthContext';
+import { api } from '../api';
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const { login } = useContext(AuthContext);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    // In real app, call API
-    console.log('Login with', email, password);
-    // On success, redirect to account.veltrobridge.xyz
-    window.location.href = 'https://account.veltrobridge.xyz/home';
+    setError('');
+    try {
+      const formData = new URLSearchParams();
+      formData.append('username', email); // OAuth2 expects 'username'
+      formData.append('password', password);
+      
+      const res = await api.post('/auth/token', formData, {
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+      });
+      
+      login(res.data.access_token);
+      window.location.href = 'https://account.veltrobridge.xyz/home';
+    } catch (err: any) {
+      setError(err.response?.data?.detail || 'Login failed');
+    }
   };
 
   return (
@@ -37,6 +52,7 @@ const Login: React.FC = () => {
             Log In
           </button>
         </form>
+        {error && <p style={{ color: '#e53e3e', marginTop: '1rem', textAlign: 'center' }}>{error}</p>}
         <p style={{ marginTop: '1rem', textAlign: 'center', fontSize: '0.875rem' }}>
           Don't have an account? <a href="https://signup.veltrobridge.xyz" style={{ color: '#3182ce' }}>Sign up</a>
         </p>

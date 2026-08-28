@@ -1,3 +1,7 @@
+import React, { useState, useEffect, useContext } from 'react';
+import { api } from '../api';
+import { AuthContext } from '../context/AuthContext';
+
 // components
 import Layout from '../components/Layout/Layout';
 import Balance from '../components/Balance/Balance';
@@ -6,22 +10,57 @@ import History from '../components/History/History';
 import Widgets from '../components/Widgets/Widgets';
 import Divider from '../components/Divider/Divider';
 
-const Home: React.FC = () => (
-  <Layout>
-    <Balance balance={1325.5} currency='EURO' currencySymbol='€' />
+const Home: React.FC = () => {
+  const { isAuthenticated, logout } = useContext(AuthContext);
+  const [balance, setBalance] = useState<number>(0);
+  const [currency, setCurrency] = useState<string>('EUR');
+  
+  useEffect(() => {
+    if (!isAuthenticated) return;
+    
+    const fetchWallets = async () => {
+      try {
+        const res = await api.get('/wallets/');
+        if (res.data && res.data.length > 0) {
+          setBalance(res.data[0].balance);
+          setCurrency(res.data[0].currency);
+        }
+      } catch (err) {
+        console.error('Failed to fetch wallet', err);
+        // If 401, they probably have an expired token
+        if ((err as any)?.response?.status === 401) {
+          logout();
+        }
+      }
+    };
+    fetchWallets();
+  }, [isAuthenticated, logout]);
 
-    <Actions />
+  // currency symbols helper
+  const getSymbol = (curr: string) => {
+    if (curr === 'EUR') return '€';
+    if (curr === 'USD') return '$';
+    if (curr === 'GBP') return '£';
+    return curr;
+  };
 
-    <Divider />
+  return (
+    <Layout>
+      <Balance balance={balance} currency={currency} currencySymbol={getSymbol(currency)} />
 
-    <History />
+      <Actions />
 
-    <Divider />
+      <Divider />
 
-    <Widgets />
+      <History />
 
-    <Divider />
-  </Layout>
-);
+      <Divider />
+
+      <Widgets />
+
+      <Divider />
+    </Layout>
+  );
+};
 
 export default Home;
