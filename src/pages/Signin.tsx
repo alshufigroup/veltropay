@@ -61,7 +61,7 @@ const Signin: React.FC = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder='Please enter your email'
-              style={{ width: '100%', padding: '10px', borderRadius: '5px', border: '1px solid #ccc', backgroundColor: '#fff', color: '#000' }}
+              className='form-control-input'
             />
           </div>
           <div className='form-line'>
@@ -77,15 +77,15 @@ const Signin: React.FC = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder='Please enter your password'
-              style={{ width: '100%', padding: '10px', borderRadius: '5px', border: '1px solid #ccc', backgroundColor: '#fff', color: '#000' }}
+              className='form-control-input'
             />
           </div>
-          {error && <p style={{ color: '#f42d53', marginBottom: '10px', textAlign: 'center', fontWeight: 'bold' }}>{error}</p>}
+          {error && <div className='status-msg status-msg-error' style={{ marginBottom: '15px' }}>{error}</div>}
           <div className='form-line'>
             <button 
               type='submit' 
               disabled={loading}
-              style={{ width: '100%', padding: '12px', backgroundColor: loading ? '#a0aec0' : '#ff8057', color: 'white', border: 'none', borderRadius: '5px', fontWeight: 'bold', cursor: loading ? 'not-allowed' : 'pointer' }}
+              className='btn-primary-action'
             >
               {loading ? 'Signing in...' : 'Sign in'}
             </button>

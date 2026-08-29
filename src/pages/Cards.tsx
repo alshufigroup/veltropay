@@ -35,6 +35,8 @@ const Cards: React.FC = () => {
 
   const cardHolderName = user?.full_name ? user.full_name.toUpperCase() : 'VALUED CUSTOMER';
 
+  const symbol = currency === 'EUR' ? '€' : currency === 'USD' ? '$' : '£';
+
   return (
     <Layout>
       <Divider />
@@ -47,19 +49,14 @@ const Cards: React.FC = () => {
           cvcNumber='482'
           validUntil='12 / 28'
           cardHolder={cardHolderName}
+          balance={balance}
+          currencySymbol={symbol}
         />
       </div>
 
       <Divider />
 
-      <div style={{ textAlign: 'center', padding: '1rem', backgroundColor: 'rgba(255, 255, 255, 0.1)', borderRadius: '12px', margin: '0 1rem' }}>
-        <p style={{ margin: 0, fontSize: '0.9rem', opacity: 0.8 }}>Available Card Balance</p>
-        <h2 style={{ fontSize: '1.8rem', margin: '0.25rem 0' }}>{currency === 'EUR' ? '€' : currency === 'USD' ? '$' : '£'} {balance.toFixed(2)}</h2>
-      </div>
-
-      <Divider />
-
-      <History detailed date='Card Transactions' />
+      <History detailed date='Card Activity' />
 
       <Divider />
     </Layout>

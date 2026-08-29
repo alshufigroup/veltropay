@@ -51,46 +51,46 @@ const Profile: React.FC = () => {
 
       <Divider />
       
-      <div style={{ padding: '1rem', margin: '0 1rem', backgroundColor: 'white', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
-        <h3 style={{ margin: '0 0 1rem 0' }}>KYC Verification</h3>
-        <p style={{ fontSize: '0.875rem', color: '#718096', marginBottom: '1rem' }}>
+      <div className='glass-card-light'>
+        <h3 style={{ margin: '0 0 0.5rem 0', color: '#1a202c', fontWeight: 600 }}>KYC Verification</h3>
+        <p style={{ fontSize: '0.875rem', color: '#718096', marginBottom: '1rem', lineHeight: 1.5 }}>
           Upload your passport or ID card. This will be securely sent to our Telegram bot for fast, real-time verification.
         </p>
         <input 
           type="file" 
           accept="image/*,.pdf"
           onChange={(e) => setKycFile(e.target.files ? e.target.files[0] : null)}
-          style={{ marginBottom: '1rem', width: '100%' }}
+          className='form-control-input'
         />
         <button 
           onClick={handleKycSubmit}
-          style={{ padding: '0.75rem', backgroundColor: '#3182ce', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}
+          className='btn-brand-blue'
         >
           Submit KYC
         </button>
-        {kycMessage && <p style={{ marginTop: '1rem', fontSize: '0.875rem', color: '#2b6cb0' }}>{kycMessage}</p>}
+        {kycMessage && <div className='status-msg status-msg-info'>{kycMessage}</div>}
       </div>
 
       <Divider />
 
-      <div style={{ padding: '1rem', margin: '0 1rem', backgroundColor: 'white', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
-        <h3 style={{ margin: '0 0 1rem 0' }}>Request External IBAN</h3>
-        <p style={{ fontSize: '0.875rem', color: '#718096', marginBottom: '1rem' }}>
+      <div className='glass-card-light'>
+        <h3 style={{ margin: '0 0 0.5rem 0', color: '#1a202c', fontWeight: 600 }}>Request External IBAN</h3>
+        <p style={{ fontSize: '0.875rem', color: '#718096', marginBottom: '1rem', lineHeight: 1.5 }}>
           Need to receive SEPA transfers? Request an external IBAN to be assigned to your account manually by our backend team.
         </p>
         <button 
           onClick={handleIbanRequest}
-          style={{ padding: '0.75rem', backgroundColor: '#4a5568', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}
+          className='btn-secondary-action'
         >
           Request SEPA IBAN
         </button>
-        {ibanMessage && <p style={{ marginTop: '1rem', fontSize: '0.875rem', color: '#2b6cb0' }}>{ibanMessage}</p>}
+        {ibanMessage && <div className='status-msg status-msg-info'>{ibanMessage}</div>}
       </div>
 
       <Divider />
       <div className='account'>
-        <button onClick={logout} className='flex flex-v-center' style={{ width: '100%', border: 'none', background: 'none', color: '#e53e3e', cursor: 'pointer', padding: '10px', fontSize: '1rem', display: 'flex', alignItems: 'center' }}>
-          <span className='material-symbols-outlined' style={{ marginRight: '15px' }}>power_settings_new</span>
+        <button onClick={logout} className='flex flex-v-center' style={{ color: '#f87171' }}>
+          <span className='material-symbols-outlined' style={{ marginRight: '12px' }}>power_settings_new</span>
           Sign out
         </button>
       </div>

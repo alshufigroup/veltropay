@@ -17,21 +17,9 @@ const Header: React.FC = () => {
 
   return (
     <header className='flex flex-v-center flex-space-between'>
-      <div className='header-profile flex flex-1'>
+      <div className='header-profile'>
         <Link to='/profile' style={{ textDecoration: 'none' }}>
-          <div 
-            className='profile-photo flex flex-h-center flex-v-center' 
-            style={{ 
-              backgroundColor: '#3182ce', 
-              color: 'white', 
-              fontWeight: 'bold', 
-              fontSize: '1rem',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
-            }}
-          >
+          <div className='profile-photo'>
             {getInitials(user?.full_name)}
           </div>
         </Link>

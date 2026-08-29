@@ -14,6 +14,7 @@ const Home: React.FC = () => {
   const { isAuthenticated, logout } = useContext(AuthContext);
   const [balance, setBalance] = useState<number>(0);
   const [currency, setCurrency] = useState<string>('EUR');
+  const [isBalanceLoading, setIsBalanceLoading] = useState<boolean>(true);
   
   useEffect(() => {
     if (!isAuthenticated) return;
@@ -31,6 +32,8 @@ const Home: React.FC = () => {
         if ((err as any)?.response?.status === 401) {
           logout();
         }
+      } finally {
+        setIsBalanceLoading(false);
       }
     };
     fetchWallets();
@@ -47,7 +50,12 @@ const Home: React.FC = () => {
 
   return (
     <Layout>
-      <Balance balance={balance} currency={currency} currencySymbol={getSymbol(currency)} />
+      <Balance 
+        balance={balance} 
+        currency={currency} 
+        currencySymbol={getSymbol(currency)} 
+        isLoading={isBalanceLoading} 
+      />
 
       <Actions />
 

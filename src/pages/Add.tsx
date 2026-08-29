@@ -63,44 +63,34 @@ const Add: React.FC = () => {
 
       <h1 className='title no-select'>Add Money</h1>
 
-      <div style={{ padding: '1.5rem', backgroundColor: 'rgba(255, 255, 255, 0.1)', borderRadius: '16px', margin: '0 1rem', backdropFilter: 'blur(10px)' }}>
-        <p style={{ margin: '0 0 0.5rem 0', opacity: 0.8, fontSize: '0.9rem' }}>Current Account Balance</p>
-        <h2 style={{ fontSize: '2rem', margin: '0 0 1.5rem 0' }}>{symbol} {currentBalance.toFixed(2)}</h2>
+      <div className='glass-card'>
+        <p className='information' style={{ marginBottom: '0.35rem', opacity: 0.85, fontSize: '0.9rem' }}>Current Account Balance</p>
+        <h2 style={{ fontSize: '2.2rem', marginBottom: '1.25rem', fontWeight: 700 }}>{symbol} {currentBalance.toFixed(2)}</h2>
 
         <form onSubmit={handleAddMoney}>
           <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem', fontWeight: 500 }}>
             Enter Amount to Deposit ({currency})
           </label>
-          <div style={{ display: 'flex', alignItems: 'center', backgroundColor: 'white', borderRadius: '8px', padding: '0.5rem 1rem', marginBottom: '1.5rem' }}>
-            <span style={{ fontSize: '1.5rem', color: '#333', fontWeight: 'bold', marginRight: '0.5rem' }}>{symbol}</span>
+          <div className='input-row'>
+            <span className='prefix'>{symbol}</span>
             <input 
               type="number" 
-              step="0.01"
-              min="1"
-              value={amount}
-              onChange={(e) => setAmount(e.target.value)}
-              placeholder="0.00"
-              required
-              style={{ width: '100%', border: 'none', outline: 'none', fontSize: '1.5rem', color: '#1a202c', fontWeight: 'bold' }}
+              step="0.01" 
+              min="1" 
+              value={amount} 
+              onChange={(e) => setAmount(e.target.value)} 
+              placeholder="0.00" 
+              required 
             />
           </div>
 
-          <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.5rem' }}>
+          <div className='preset-grid'>
             {['20', '50', '100', '250', '500'].map((preset) => (
               <button
                 type="button"
                 key={preset}
                 onClick={() => setAmount(preset)}
-                style={{
-                  flex: 1,
-                  padding: '0.5rem',
-                  borderRadius: '6px',
-                  border: '1px solid rgba(255,255,255,0.3)',
-                  backgroundColor: amount === preset ? '#3182ce' : 'rgba(255,255,255,0.1)',
-                  color: 'white',
-                  fontWeight: 'bold',
-                  cursor: 'pointer'
-                }}
+                className={`preset-btn ${amount === preset ? 'active' : ''}`}
               >
                 +{symbol}{preset}
               </button>
@@ -110,24 +100,14 @@ const Add: React.FC = () => {
           <button 
             type="submit" 
             disabled={loading}
-            style={{ 
-              width: '100%', 
-              padding: '1rem', 
-              backgroundColor: loading ? '#a0aec0' : '#ff8057', 
-              color: 'white', 
-              border: 'none', 
-              borderRadius: '8px', 
-              fontWeight: 'bold', 
-              fontSize: '1.1rem',
-              cursor: loading ? 'not-allowed' : 'pointer'
-            }}
+            className='btn-primary-action'
           >
             {loading ? 'Processing Deposit...' : 'Add Money Securely'}
           </button>
         </form>
 
-        {message && <p style={{ color: '#4ed34e', marginTop: '1rem', textAlign: 'center', fontWeight: 'bold' }}>{message}</p>}
-        {error && <p style={{ color: '#f42d53', marginTop: '1rem', textAlign: 'center', fontWeight: 'bold' }}>{error}</p>}
+        {message && <div className='status-msg status-msg-success'>{message}</div>}
+        {error && <div className='status-msg status-msg-error'>{error}</div>}
       </div>
 
       <Divider />

@@ -75,7 +75,18 @@ const History: React.FC<IProps> = ({
       )}
       <div className='history'>
         {loading ? (
-          <p style={{ textAlign: 'center', padding: '1rem', color: '#a0aec0' }}>Loading activity...</p>
+          <div style={{ padding: '10px 6px' }}>
+            {[1, 2, 3].map((i) => (
+              <div key={i} className='history-line flex flex-v-center flex-space-between' style={{ opacity: 0.6 }}>
+                <div className='circle-icon gray' style={{ width: '40px', height: '40px' }} />
+                <div className='history-line-details' style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                  <div className='skeleton' style={{ width: '130px', height: '14px' }} />
+                  <div className='skeleton' style={{ width: '70px', height: '10px' }} />
+                </div>
+                <div className='skeleton' style={{ width: '60px', height: '16px' }} />
+              </div>
+            ))}
+          </div>
         ) : transactions.length > 0 ? (
           transactions.map((tx) => (
             <HistoryLine
@@ -92,8 +103,11 @@ const History: React.FC<IProps> = ({
             />
           ))
         ) : (
-          <div style={{ textAlign: 'center', padding: '1.5rem 1rem', color: '#e2e8f0' }}>
-            <p style={{ fontSize: '0.95rem', margin: 0 }}>No transactions yet.</p>
+          <div style={{ textAlign: 'center', padding: '1.75rem 1rem' }}>
+            <span className='material-symbols-outlined' style={{ fontSize: '2.5rem', opacity: 0.5, marginBottom: '0.5rem' }}>
+              receipt_long
+            </span>
+            <p style={{ fontSize: '0.95rem', fontWeight: 600, margin: 0 }}>No transactions yet</p>
             <p style={{ fontSize: '0.8rem', color: '#cbd5e0', marginTop: '0.25rem' }}>Your transfer activity will appear here.</p>
           </div>
         )}

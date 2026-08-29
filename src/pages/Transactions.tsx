@@ -44,57 +44,63 @@ const Transactions: React.FC = () => {
       <Divider />
       <h1 className='title no-select'>Send Money (P2P)</h1>
       
-      <div style={{ padding: '1rem', backgroundColor: '#f7fafc', borderRadius: '8px', margin: '0 1rem' }}>
+      <div className='glass-card-light'>
+        <label style={{ display: 'block', marginBottom: '0.4rem', fontSize: '0.9rem', color: '#4a5568', fontWeight: 600 }}>
+          Recipient Account Number
+        </label>
         <input 
           type="text" 
-          placeholder="8-Digit Account Number" 
+          placeholder="e.g. 12345678" 
           value={accountNumber}
           onChange={(e) => setAccountNumber(e.target.value)}
-          style={{ width: '100%', padding: '0.75rem', marginBottom: '1rem', borderRadius: '4px', border: '1px solid #cbd5e0' }}
+          className='form-control-input'
         />
         <button 
           onClick={lookupAccount}
-          style={{ padding: '0.75rem 1.5rem', backgroundColor: '#4a5568', color: 'white', borderRadius: '4px', border: 'none', cursor: 'pointer' }}
+          className='btn-secondary-action'
         >
           Lookup Account
         </button>
 
         {recipient && (
-          <div style={{ marginTop: '1.5rem', padding: '1rem', backgroundColor: 'white', borderRadius: '4px', border: '1px solid #e2e8f0' }}>
-            <p style={{ margin: '0 0 0.5rem 0', fontWeight: 'bold' }}>Recipient Found:</p>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem' }}>
-              <div style={{ width: '40px', height: '40px', borderRadius: '50%', backgroundColor: '#cbd5e0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                👤
+          <div style={{ marginTop: '1.25rem', padding: '1rem', backgroundColor: '#f8fafc', borderRadius: '10px', border: '1px solid #e2e8f0' }}>
+            <p style={{ margin: '0 0 0.5rem 0', fontWeight: 600, color: '#2d3748' }}>Recipient Found:</p>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1rem' }}>
+              <div style={{ width: '42px', height: '42px', borderRadius: '50%', backgroundColor: '#3182ce', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold' }}>
+                {recipient.full_name ? recipient.full_name[0].toUpperCase() : '👤'}
               </div>
               <div>
-                <p style={{ margin: 0, fontWeight: 'bold' }}>{recipient.full_name}</p>
-                <p style={{ margin: 0, color: '#718096', fontSize: '0.875rem' }}>Currency: {recipient.currency}</p>
+                <p style={{ margin: 0, fontWeight: 600, color: '#1a202c' }}>{recipient.full_name}</p>
+                <p style={{ margin: 0, color: '#718096', fontSize: '0.85rem' }}>Currency: {recipient.currency}</p>
               </div>
             </div>
 
+            <label style={{ display: 'block', marginBottom: '0.4rem', fontSize: '0.9rem', color: '#4a5568', fontWeight: 600 }}>
+              Amount to Send ({recipient.currency})
+            </label>
             <input 
               type="number" 
-              placeholder={`Amount in ${recipient.currency}`} 
+              placeholder="0.00" 
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
-              style={{ width: '100%', padding: '0.75rem', marginBottom: '1rem', borderRadius: '4px', border: '1px solid #cbd5e0' }}
+              className='form-control-input'
             />
             <button 
               onClick={sendMoney}
-              style={{ width: '100%', padding: '0.75rem', backgroundColor: '#3182ce', color: 'white', borderRadius: '4px', border: 'none', cursor: 'pointer', fontWeight: 'bold' }}
+              className='btn-primary-action'
             >
-              Send Money
+              Send Money Now
             </button>
           </div>
         )}
         
-        {error && <p style={{ color: '#e53e3e', marginTop: '1rem' }}>{error}</p>}
-        {success && <p style={{ color: '#38a169', marginTop: '1rem' }}>{success}</p>}
+        {error && <div className='status-msg status-msg-error'>{error}</div>}
+        {success && <div className='status-msg status-msg-success'>{success}</div>}
       </div>
 
       <Divider />
       <h1 className='title no-select'>Transaction History</h1>
-      <History detailed date='May 6' dateBalance='-€127.78' />
+      <History detailed date='All Transactions' />
       <Divider />
     </Layout>
   );

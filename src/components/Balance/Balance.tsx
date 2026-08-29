@@ -3,17 +3,24 @@ interface IProps {
   balance: number;
   currency: string;
   currencySymbol: string;
+  isLoading?: boolean;
 }
 
-const Balance: React.FC<IProps> = ({ balance, currency, currencySymbol }) => (
+const Balance: React.FC<IProps> = ({ balance, currency, currencySymbol, isLoading = false }) => (
   <div className='balance flex flex-col flex-v-center flex-h-center'>
     <p className='currency text-shadow no-select flex flex-v-center flex-h-center'>
       Main - {currency}
       <span className='material-symbols-outlined'>keyboard_arrow_down</span>
     </p>
     <h1 className='text-shadow no-select flex flex-h-center flex-v-center'>
-      <span>{currencySymbol}</span>
-      {balance}
+      {isLoading ? (
+        <div className='skeleton skeleton-balance' />
+      ) : (
+        <>
+          <span>{currencySymbol}</span>
+          {typeof balance === 'number' ? balance.toFixed(2) : balance}
+        </>
+      )}
     </h1>
   </div>
 );
