@@ -58,6 +58,7 @@ const Home: React.FC = () => {
         currencySymbol={getSymbol(currency)} 
         accountNumber={accountNumber}
         isLoading={isBalanceLoading} 
+        onExchangeSuccess={fetchWallets}
       />
 
       <Actions />
