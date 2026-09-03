@@ -18,7 +18,7 @@ interface IbanDetails {
 }
 
 const Add: React.FC = () => {
-  const { user, isAuthenticated } = useContext(AuthContext);
+  const { isAuthenticated } = useContext(AuthContext);
   const [currentBalance, setCurrentBalance] = useState<number>(0);
   const [currency, setCurrency] = useState<string>('EUR');
   const [kycStatus, setKycStatus] = useState<string>('unverified');
