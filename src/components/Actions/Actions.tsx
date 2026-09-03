@@ -11,7 +11,7 @@ const Actions: React.FC = () => (
     </div>
 
     <div className='circle no-select flex flex-col flex-v-center flex-h-center'>
-      <Link to='/add' className='flex flex-v-center flex-h-center' title='Add Money / Deposit'>
+      <Link to='/add' className='flex flex-v-center flex-h-center' title='Deposit / Add Funds'>
         <span className='material-symbols-outlined'>add</span>
       </Link>
       <span className='text-shadow'>Add Money</span>
@@ -29,13 +29,6 @@ const Actions: React.FC = () => (
         <span className='material-symbols-outlined'>savings</span>
       </Link>
       <span className='text-shadow'>Savings</span>
-    </div>
-
-    <div className='circle no-select flex flex-col flex-v-center flex-h-center'>
-      <Link to='/profile' className='flex flex-v-center flex-h-center' title='Profile & Settings'>
-        <span className='material-symbols-outlined'>account_circle</span>
-      </Link>
-      <span className='text-shadow'>Profile</span>
     </div>
   </div>
 );

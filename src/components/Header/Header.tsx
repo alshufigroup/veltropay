@@ -1,9 +1,11 @@
-import React, { useRef, useContext } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useRef, useContext } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../context/AuthContext';
 
 const Header: React.FC = () => {
   const inputRef = useRef<HTMLInputElement>(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const navigate = useNavigate();
   const { user } = useContext(AuthContext);
 
   const getInitials = (name?: string) => {
@@ -13,6 +15,13 @@ const Header: React.FC = () => {
       return (parts[0][0] + parts[1][0]).toUpperCase();
     }
     return name.substring(0, 2).toUpperCase();
+  };
+
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchTerm.trim()) {
+      navigate('/transactions');
+    }
   };
 
   return (
@@ -32,8 +41,9 @@ const Header: React.FC = () => {
           </div>
         </Link>
       </div>
+
       <div className='header-center'>
-        <div className='header-search flex flex-v-center'>
+        <form onSubmit={handleSearchSubmit} className='header-search flex flex-v-center'>
           <span
             tabIndex={0}
             role='button'
@@ -45,9 +55,18 @@ const Header: React.FC = () => {
           >
             search
           </span>
-          <input ref={inputRef} type='text' name='search' id='search' placeholder='Search' />
-        </div>
+          <input 
+            ref={inputRef} 
+            type='text' 
+            name='search' 
+            id='search' 
+            placeholder='Search transactions...'
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </form>
       </div>
+
       <div className='header-buttons flex flex-1 flex-v-center flex-end'>
         <Link to='/transactions' className='header-button flex flex-v-center flex-h-center' title='Transactions'>
           <span className='material-symbols-outlined'>equalizer</span>
