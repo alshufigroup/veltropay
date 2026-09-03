@@ -34,6 +34,8 @@ const Transactions: React.FC = () => {
   // Primary Wallet
   const [currency, setCurrency] = useState('EUR');
   const [balance, setBalance] = useState(0);
+  const [myAccountNumber, setMyAccountNumber] = useState('');
+  const [copiedMyAccount, setCopiedMyAccount] = useState(false);
 
   // PIN Security Modal State
   const [isPinModalOpen, setIsPinModalOpen] = useState(false);
@@ -49,6 +51,7 @@ const Transactions: React.FC = () => {
         if (res.data && res.data.length > 0) {
           setCurrency(res.data[0].currency);
           setBalance(res.data[0].balance);
+          setMyAccountNumber(res.data[0].account_number);
         }
       } catch (err) {
         console.error('Failed to fetch wallet info', err);
@@ -222,8 +225,30 @@ const Transactions: React.FC = () => {
 
       {activeTab === 'p2p' && (
         <div className='glass-card'>
-          <h3 style={{ marginBottom: '0.4rem' }}>Send Money to VeltroPay Account</h3>
-          <p style={{ marginBottom: '1.2rem' }}>Instant zero-fee transfer to any client account number.</p>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '10px', marginBottom: '1rem', paddingBottom: '0.75rem', borderBottom: '1px solid rgba(255, 255, 255, 0.08)' }}>
+            <div>
+              <h3 style={{ margin: 0, fontSize: '1.15rem' }}>Send Money to VeltroPay Account</h3>
+              <p style={{ margin: '2px 0 0 0', fontSize: '0.82rem', color: '#94a3b8' }}>Instant zero-fee transfer to any client account number.</p>
+            </div>
+            {myAccountNumber && (
+              <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', background: 'rgba(59, 130, 246, 0.15)', border: '1px solid rgba(59, 130, 246, 0.3)', padding: '4px 10px', borderRadius: '10px' }}>
+                <span style={{ fontSize: '0.75rem', color: '#94a3b8' }}>Your Acc:</span>
+                <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#38bdf8', fontFamily: 'monospace' }}>{myAccountNumber}</span>
+                <button
+                  type='button'
+                  onClick={() => {
+                    navigator.clipboard.writeText(myAccountNumber);
+                    setCopiedMyAccount(true);
+                    setTimeout(() => setCopiedMyAccount(false), 2000);
+                  }}
+                  style={{ background: 'transparent', border: 'none', color: copiedMyAccount ? '#34d399' : '#94a3b8', cursor: 'pointer', display: 'flex', alignItems: 'center', padding: '0 2px' }}
+                  title='Copy your account number'
+                >
+                  <span className='material-symbols-outlined' style={{ fontSize: '1rem' }}>{copiedMyAccount ? 'check' : 'content_copy'}</span>
+                </button>
+              </div>
+            )}
+          </div>
 
           <label htmlFor='p2p-account'>
             Recipient Account Number

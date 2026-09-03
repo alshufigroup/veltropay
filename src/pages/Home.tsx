@@ -14,6 +14,7 @@ const Home: React.FC = () => {
   const { isAuthenticated, logout } = useContext(AuthContext);
   const [balance, setBalance] = useState<number>(0);
   const [currency, setCurrency] = useState<string>('EUR');
+  const [accountNumber, setAccountNumber] = useState<string>('');
   const [isBalanceLoading, setIsBalanceLoading] = useState<boolean>(true);
   
   useEffect(() => {
@@ -25,6 +26,7 @@ const Home: React.FC = () => {
         if (res.data && res.data.length > 0) {
           setBalance(res.data[0].balance);
           setCurrency(res.data[0].currency);
+          setAccountNumber(res.data[0].account_number);
         }
       } catch (err) {
         console.error('Failed to fetch wallet', err);
@@ -54,6 +56,7 @@ const Home: React.FC = () => {
         balance={balance} 
         currency={currency} 
         currencySymbol={getSymbol(currency)} 
+        accountNumber={accountNumber}
         isLoading={isBalanceLoading} 
       />
 

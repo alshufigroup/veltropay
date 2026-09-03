@@ -37,6 +37,7 @@ const Profile: React.FC = () => {
   const [pinLoading, setPinLoading] = useState(false);
   const [pinMsg, setPinMsg] = useState('');
   const [pinError, setPinError] = useState('');
+  const [accountNumber, setAccountNumber] = useState<string>('');
 
   const fetchPinStatus = async () => {
     try {
@@ -50,9 +51,10 @@ const Profile: React.FC = () => {
   useEffect(() => {
     const fetchStatus = async () => {
       try {
-        const [kycRes, pinRes] = await Promise.all([
+        const [kycRes, pinRes, walletRes] = await Promise.all([
           api.get('/kyc/status'),
-          api.get('/auth/pin/status').catch(() => ({ data: { has_pin: false } }))
+          api.get('/auth/pin/status').catch(() => ({ data: { has_pin: false } })),
+          api.get('/wallets/').catch(() => ({ data: [] }))
         ]);
         if (kycRes.data) {
           setKycStatus(kycRes.data.kyc_status);
@@ -62,6 +64,9 @@ const Profile: React.FC = () => {
         }
         if (pinRes.data) {
           setHasPin(pinRes.data.has_pin);
+        }
+        if (walletRes.data && walletRes.data.length > 0) {
+          setAccountNumber(walletRes.data[0].account_number);
         }
       } catch (err) {
         console.error('Failed to fetch status', err);
@@ -289,6 +294,51 @@ const Profile: React.FC = () => {
             </span>
           )}
         </p>
+      </div>
+
+      {/* Internal VeltroPay Account Details Card */}
+      <div className='glass-card' style={{ marginBottom: '1.5rem', background: 'linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.95) 100%)', border: '1px solid rgba(59, 130, 246, 0.35)', position: 'relative', overflow: 'hidden' }}>
+        <div style={{ position: 'absolute', top: '-20px', right: '-20px', width: '100px', height: '100px', background: 'radial-gradient(circle, rgba(59, 130, 246, 0.25) 0%, transparent 70%)', pointerEvents: 'none' }} />
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.6rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: 'rgba(59, 130, 246, 0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <span className='material-symbols-outlined' style={{ color: '#38bdf8', fontSize: '1.2rem' }}>account_balance_wallet</span>
+            </div>
+            <div>
+              <h3 style={{ margin: 0, fontSize: '1.1rem', color: '#ffffff' }}>Internal VeltroPay Account</h3>
+              <p style={{ margin: '1px 0 0 0', fontSize: '0.78rem', color: '#94a3b8' }}>For instant, zero-fee client-to-client transfers</p>
+            </div>
+          </div>
+          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', background: 'rgba(56, 189, 248, 0.15)', color: '#38bdf8', border: '1px solid rgba(56, 189, 248, 0.3)', padding: '3px 10px', borderRadius: '9999px', fontSize: '0.75rem', fontWeight: 600 }}>
+            P2P Instant
+          </span>
+        </div>
+
+        <p style={{ fontSize: '0.84rem', color: '#cbd5e1', lineHeight: 1.45, margin: '0.5rem 0 1rem 0' }}>
+          Share your 8-digit account number below with other VeltroPay clients to receive instant peer-to-peer transfers into your wallet.
+        </p>
+
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'rgba(15, 23, 42, 0.85)', padding: '12px 16px', borderRadius: '14px', border: '1px solid rgba(255, 255, 255, 0.12)' }}>
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
+            <span style={{ fontSize: '0.72rem', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.8px', fontWeight: 600 }}>
+              Your 8-Digit Account ID
+            </span>
+            <span style={{ fontSize: '1.45rem', fontWeight: 700, color: '#38bdf8', letterSpacing: '2.5px', fontFamily: 'monospace', marginTop: '2px' }}>
+              {accountNumber || '••••••••'}
+            </span>
+          </div>
+          <button
+            type='button'
+            onClick={() => copyToClipboard(accountNumber, 'acc_num')}
+            className='btn-copy'
+            style={{ padding: '8px 16px', fontSize: '0.85rem', fontWeight: 600 }}
+          >
+            <span className='material-symbols-outlined' style={{ fontSize: '1.1rem' }}>
+              {copiedKey === 'acc_num' ? 'check' : 'content_copy'}
+            </span>
+            {copiedKey === 'acc_num' ? 'Copied!' : 'Copy'}
+          </button>
+        </div>
       </div>
 
       {/* Dedicated IBAN Information Card */}
