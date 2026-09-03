@@ -9,6 +9,9 @@ const Signup: React.FC = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
+  const isSubdomainSetup = typeof window !== 'undefined' && window.location.hostname.endsWith('veltrobridge.xyz');
+  const loginUrl = isSubdomainSetup ? 'https://login.veltrobridge.xyz' : '/login';
+
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
@@ -20,7 +23,11 @@ const Signup: React.FC = () => {
         password,
         currency
       });
-      window.location.href = 'https://login.veltrobridge.xyz/verify?email=' + encodeURIComponent(email);
+      if (isSubdomainSetup) {
+        window.location.href = 'https://login.veltrobridge.xyz/verify?email=' + encodeURIComponent(email);
+      } else {
+        window.location.href = '/verify?email=' + encodeURIComponent(email);
+      }
     } catch (err: any) {
       setError(err.response?.data?.detail || 'Signup failed. Please try again.');
     } finally {
@@ -101,7 +108,7 @@ const Signup: React.FC = () => {
 
         <div className='auth-links'>
           <span>Already have an account? </span>
-          <a href='https://login.veltrobridge.xyz'>
+          <a href={loginUrl}>
             Sign in
           </a>
         </div>

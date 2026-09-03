@@ -9,6 +9,9 @@ const Login: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const { login } = useContext(AuthContext);
 
+  const isSubdomainSetup = typeof window !== 'undefined' && window.location.hostname.endsWith('veltrobridge.xyz');
+  const signupUrl = isSubdomainSetup ? 'https://signup.veltrobridge.xyz' : '/signup';
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
@@ -23,11 +26,19 @@ const Login: React.FC = () => {
       });
       
       login(res.data.access_token);
-      window.location.href = 'https://account.veltrobridge.xyz/home?token=' + encodeURIComponent(res.data.access_token);
+      if (isSubdomainSetup) {
+        window.location.href = 'https://account.veltrobridge.xyz/home?token=' + encodeURIComponent(res.data.access_token);
+      } else {
+        window.location.href = '/home?token=' + encodeURIComponent(res.data.access_token);
+      }
     } catch (err: any) {
       const errMsg = err.response?.data?.detail;
       if (errMsg === 'Email not verified') {
-        window.location.href = 'https://login.veltrobridge.xyz/verify?email=' + encodeURIComponent(email);
+        if (isSubdomainSetup) {
+          window.location.href = 'https://login.veltrobridge.xyz/verify?email=' + encodeURIComponent(email);
+        } else {
+          window.location.href = '/verify?email=' + encodeURIComponent(email);
+        }
       } else {
         setError(errMsg || 'Sign in failed. Please check your credentials.');
       }
@@ -86,7 +97,7 @@ const Login: React.FC = () => {
 
         <div className='auth-links'>
           <span>Don&apos;t have an account? </span>
-          <a href='https://signup.veltrobridge.xyz'>
+          <a href={signupUrl}>
             Create account
           </a>
         </div>

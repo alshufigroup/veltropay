@@ -7,32 +7,38 @@ import VerifyEmail from './pages/VerifyEmail';
 
 const App: React.FC = () => {
   const hostname = window.location.hostname;
-  const pathname = window.location.pathname;
+  const pathname = window.location.pathname.toLowerCase();
 
-  // Global path-based route for email verification
+  // Global route for email verification
   if (pathname.startsWith('/verify')) {
     return <VerifyEmail />;
   }
 
-  if (hostname.startsWith('login.')) {
+  // Check login route (subdomain or path)
+  if (hostname.startsWith('login.') || pathname.startsWith('/login') || pathname.startsWith('/signin')) {
     return <Login />;
   }
   
-  if (hostname.startsWith('signup.')) {
+  // Check signup route (subdomain or path)
+  if (hostname.startsWith('signup.') || pathname.startsWith('/signup') || pathname.startsWith('/register')) {
     return <Signup />;
   }
 
-  if (hostname.startsWith('account.')) {
+  // Check banking app routes (subdomain or path)
+  if (
+    hostname.startsWith('account.') || 
+    pathname.startsWith('/account') || 
+    pathname.startsWith('/home') || 
+    pathname.startsWith('/cards') || 
+    pathname.startsWith('/savings') || 
+    pathname.startsWith('/transactions') || 
+    pathname.startsWith('/profile') || 
+    pathname.startsWith('/add')
+  ) {
     return <Navigation />;
   }
 
-  // Default to marketing page if it's the root domain (veltrobridge.xyz)
-  // or localhost for development
-  if (hostname === 'localhost' || hostname === '127.0.0.1') {
-    // In dev, you might want to force a specific view to test
-    // return <Navigation />;
-  }
-  
+  // Default to Marketing landing page for root domain
   return <Marketing />;
 };
 

@@ -1,6 +1,10 @@
 import React from 'react';
 
 const Marketing: React.FC = () => {
+  const isSubdomainSetup = typeof window !== 'undefined' && window.location.hostname.endsWith('veltrobridge.xyz');
+  const loginUrl = isSubdomainSetup ? 'https://login.veltrobridge.xyz' : '/login';
+  const signupUrl = isSubdomainSetup ? 'https://signup.veltrobridge.xyz' : '/signup';
+
   return (
     <div className='marketing-page'>
       <div className='bg' />
@@ -14,10 +18,10 @@ const Marketing: React.FC = () => {
           <span>VeltroPay</span>
         </div>
         <div className='m-nav-actions'>
-          <a href='https://login.veltrobridge.xyz' className='m-btn-ghost'>
+          <a href={loginUrl} className='m-btn-ghost'>
             Log In
           </a>
-          <a href='https://signup.veltrobridge.xyz' className='m-btn-cta'>
+          <a href={signupUrl} className='m-btn-cta'>
             Get Started
           </a>
         </div>
@@ -36,11 +40,11 @@ const Marketing: React.FC = () => {
             Instant multi-currency accounts, dedicated European SEPA IBANs, virtual debit cards, and frictionless automated KYC verification.
           </p>
           <div className='m-hero-buttons'>
-            <a href='https://signup.veltrobridge.xyz' className='m-btn-hero-primary'>
+            <a href={signupUrl} className='m-btn-hero-primary'>
               Open Free Account
               <span className='material-symbols-outlined'>arrow_forward</span>
             </a>
-            <a href='https://login.veltrobridge.xyz' className='m-btn-hero-secondary'>
+            <a href={loginUrl} className='m-btn-hero-secondary'>
               Sign In to Portal
             </a>
           </div>
@@ -150,7 +154,7 @@ const Marketing: React.FC = () => {
               <span className='material-symbols-outlined'>currency_exchange</span>
             </div>
             <h3>Multi-Currency Vaults</h3>
-            <p>Hold, convert, and manage EUR, USD, and GBP seamlessly with competitive market exchange rates.</p>
+            <p>Hold, convert, and manage EUR, USD, and GBP seamlessly with competitive market exchange rates and daily compounding interest.</p>
           </div>
 
           <div className='m-feature-card'>
@@ -158,7 +162,7 @@ const Marketing: React.FC = () => {
               <span className='material-symbols-outlined'>lock</span>
             </div>
             <h3>Bank-Grade Security</h3>
-            <p>End-to-end encrypted sessions, OAuth2 JWT tokens, and strict access control protecting your wealth 24/7.</p>
+            <p>End-to-end encrypted sessions, 6-digit 2FA Transaction PIN, idempotency keys, and OAuth2 tokens protecting your wealth 24/7.</p>
           </div>
         </div>
       </section>

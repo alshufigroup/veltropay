@@ -74,7 +74,12 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     localStorage.removeItem('token');
     setToken(null);
     setUser(null);
-    window.location.href = 'https://login.veltrobridge.xyz';
+    const isSubdomainSetup = typeof window !== 'undefined' && window.location.hostname.endsWith('veltrobridge.xyz');
+    if (isSubdomainSetup) {
+      window.location.href = 'https://login.veltrobridge.xyz';
+    } else {
+      window.location.href = '/login';
+    }
   };
 
   const updateUser = (updatedUser: User) => {

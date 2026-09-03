@@ -8,6 +8,9 @@ const VerifyEmail: React.FC = () => {
   const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
 
+  const isSubdomainSetup = typeof window !== 'undefined' && window.location.hostname.endsWith('veltrobridge.xyz');
+  const loginUrl = isSubdomainSetup ? 'https://login.veltrobridge.xyz' : '/login';
+
   useEffect(() => {
     // Grab email from query param if available
     const params = new URLSearchParams(window.location.search);
@@ -29,8 +32,8 @@ const VerifyEmail: React.FC = () => {
       });
       setSuccess('Email verified successfully! Redirecting to login...');
       setTimeout(() => {
-        window.location.href = 'https://login.veltrobridge.xyz';
-      }, 2500);
+        window.location.href = loginUrl;
+      }, 2000);
     } catch (err: any) {
       setError(err.response?.data?.detail || 'Verification failed. Please check the code.');
     } finally {
@@ -91,7 +94,7 @@ const VerifyEmail: React.FC = () => {
 
         <div className='auth-links'>
           <span>Back to </span>
-          <a href='https://login.veltrobridge.xyz'>
+          <a href={loginUrl}>
             Sign in
           </a>
         </div>
