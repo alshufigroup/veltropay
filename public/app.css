@@ -1527,6 +1527,12 @@ header .header-button span {
   box-shadow: 0 6px 18px rgba(59, 130, 246, 0.5);
 }
 
+@media (min-width: 860px) {
+  .desktop-nav-links {
+    display: flex !important;
+  }
+}
+
 .m-hero {
   max-width: 1200px;
   margin: 0 auto;
