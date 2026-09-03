@@ -7,6 +7,7 @@ export interface User {
   full_name: string;
   kyc_status: string;
   is_active: boolean;
+  avatar_url?: string;
 }
 
 interface AuthContextType {
@@ -14,6 +15,7 @@ interface AuthContextType {
   token: string | null;
   login: (token: string) => void;
   logout: () => void;
+  updateUser: (updatedUser: User) => void;
   isAuthenticated: boolean;
   isLoading: boolean;
 }
@@ -23,6 +25,7 @@ export const AuthContext = createContext<AuthContextType>({
   token: null,
   login: () => {},
   logout: () => {},
+  updateUser: () => {},
   isAuthenticated: false,
   isLoading: true,
 });
@@ -71,11 +74,15 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     localStorage.removeItem('token');
     setToken(null);
     setUser(null);
-    window.location.href = 'https://login.veltrobridge.xyz'; // Redirect to login domain
+    window.location.href = 'https://login.veltrobridge.xyz';
+  };
+
+  const updateUser = (updatedUser: User) => {
+    setUser(updatedUser);
   };
 
   return (
-    <AuthContext.Provider value={{ user, token, login, logout, isAuthenticated: !!token, isLoading }}>
+    <AuthContext.Provider value={{ user, token, login, logout, updateUser, isAuthenticated: !!token, isLoading }}>
       {children}
     </AuthContext.Provider>
   );

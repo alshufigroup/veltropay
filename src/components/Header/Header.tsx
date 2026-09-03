@@ -18,9 +18,17 @@ const Header: React.FC = () => {
   return (
     <header className='flex flex-v-center flex-space-between'>
       <div className='header-profile'>
-        <Link to='/profile' style={{ textDecoration: 'none' }}>
+        <Link to='/profile' style={{ textDecoration: 'none' }} title='View Profile & Settings'>
           <div className='profile-photo'>
-            {getInitials(user?.full_name)}
+            {user?.avatar_url ? (
+              <img 
+                src={user.avatar_url} 
+                alt={user.full_name || 'Profile'} 
+                style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} 
+              />
+            ) : (
+              getInitials(user?.full_name)
+            )}
           </div>
         </Link>
       </div>
@@ -41,10 +49,10 @@ const Header: React.FC = () => {
         </div>
       </div>
       <div className='header-buttons flex flex-1 flex-v-center flex-end'>
-        <Link to='/transactions' className='header-button flex flex-v-center flex-h-center'>
+        <Link to='/transactions' className='header-button flex flex-v-center flex-h-center' title='Transactions'>
           <span className='material-symbols-outlined'>equalizer</span>
         </Link>
-        <Link to='/cards' className='header-button flex flex-v-center flex-h-center'>
+        <Link to='/cards' className='header-button flex flex-v-center flex-h-center' title='Virtual Cards'>
           <span className='material-symbols-outlined'>credit_card</span>
         </Link>
       </div>
