@@ -28,23 +28,84 @@ const Profile: React.FC = () => {
   const [avatarLoading, setAvatarLoading] = useState(false);
   const [avatarMsg, setAvatarMsg] = useState('');
 
+  // Transaction PIN State
+  const [hasPin, setHasPin] = useState<boolean | null>(null);
+  const [showPinForm, setShowPinForm] = useState(false);
+  const [newPin, setNewPin] = useState('');
+  const [confirmPinVal, setConfirmPinVal] = useState('');
+  const [pinPassword, setPinPassword] = useState('');
+  const [pinLoading, setPinLoading] = useState(false);
+  const [pinMsg, setPinMsg] = useState('');
+  const [pinError, setPinError] = useState('');
+
+  const fetchPinStatus = async () => {
+    try {
+      const res = await api.get('/auth/pin/status');
+      setHasPin(res.data.has_pin);
+    } catch (err) {
+      console.error('Failed to fetch PIN status', err);
+    }
+  };
+
   useEffect(() => {
     const fetchStatus = async () => {
       try {
-        const res = await api.get('/kyc/status');
-        if (res.data) {
-          setKycStatus(res.data.kyc_status);
-          if (res.data.iban_details) {
-            setIbanDetails(res.data.iban_details);
+        const [kycRes, pinRes] = await Promise.all([
+          api.get('/kyc/status'),
+          api.get('/auth/pin/status').catch(() => ({ data: { has_pin: false } }))
+        ]);
+        if (kycRes.data) {
+          setKycStatus(kycRes.data.kyc_status);
+          if (kycRes.data.iban_details) {
+            setIbanDetails(kycRes.data.iban_details);
           }
         }
+        if (pinRes.data) {
+          setHasPin(pinRes.data.has_pin);
+        }
       } catch (err) {
-        console.error('Failed to fetch KYC status', err);
+        console.error('Failed to fetch status', err);
       }
     };
 
     fetchStatus();
   }, []);
+
+  const handleSetOrUpdatePin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setPinError('');
+    setPinMsg('');
+
+    if (newPin.length !== 6 || !/^\d+$/.test(newPin)) {
+      setPinError('PIN must be exactly 6 digits (numbers only).');
+      return;
+    }
+
+    if (newPin !== confirmPinVal) {
+      setPinError('PIN confirmation does not match.');
+      return;
+    }
+
+    setPinLoading(true);
+    try {
+      const payload: { pin: string; current_password?: string } = { pin: newPin };
+      if (hasPin && pinPassword) {
+        payload.current_password = pinPassword;
+      }
+
+      await api.post('/auth/pin/set', payload);
+      setPinMsg('6-Digit Transaction PIN saved successfully!');
+      setHasPin(true);
+      setNewPin('');
+      setConfirmPinVal('');
+      setPinPassword('');
+      setShowPinForm(false);
+    } catch (err: any) {
+      setPinError(err.response?.data?.detail || 'Failed to set Transaction PIN.');
+    } finally {
+      setPinLoading(false);
+    }
+  };
 
   const copyToClipboard = (text: string, key: string) => {
     navigator.clipboard.writeText(text);
@@ -400,6 +461,119 @@ const Profile: React.FC = () => {
           )}
         </div>
       )}
+
+      {/* Transaction PIN & Security Management Card */}
+      <div className='glass-card' style={{ marginBottom: '1.5rem' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
+          <div>
+            <h3 style={{ margin: 0, fontSize: '1.15rem', color: '#ffffff' }}>2FA Transaction PIN</h3>
+            <p style={{ margin: '2px 0 0 0', fontSize: '0.82rem', color: '#94a3b8' }}>
+              6-digit security code for authorizing transfers and bank withdrawals
+            </p>
+          </div>
+          {hasPin ? (
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', background: 'rgba(16, 185, 129, 0.15)', color: '#34d399', border: '1px solid rgba(16, 185, 129, 0.3)', padding: '3px 10px', borderRadius: '9999px', fontSize: '0.75rem', fontWeight: 600 }}>
+              <span className='material-symbols-outlined' style={{ fontSize: '0.9rem' }}>shield</span>
+              Active
+            </span>
+          ) : (
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', background: 'rgba(239, 68, 68, 0.15)', color: '#f87171', border: '1px solid rgba(239, 68, 68, 0.3)', padding: '3px 10px', borderRadius: '9999px', fontSize: '0.75rem', fontWeight: 600 }}>
+              <span className='material-symbols-outlined' style={{ fontSize: '0.9rem' }}>lock_clock</span>
+              Not Configured
+            </span>
+          )}
+        </div>
+
+        {!showPinForm ? (
+          <div style={{ marginTop: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <span style={{ fontSize: '0.88rem', color: '#cbd5e1' }}>
+              {hasPin 
+                ? 'Your 6-digit PIN is active and safeguarding your outgoing funds.' 
+                : 'Protect your account by setting a 6-digit transaction authorization PIN.'}
+            </span>
+            <button
+              type='button'
+              onClick={() => setShowPinForm(true)}
+              className='btn-secondary-action'
+              style={{ minWidth: '120px', marginLeft: '12px' }}
+            >
+              {hasPin ? 'Change PIN' : 'Set PIN'}
+            </button>
+          </div>
+        ) : (
+          <form onSubmit={handleSetOrUpdatePin} style={{ marginTop: '1.25rem', paddingTop: '1rem', borderTop: '1px solid rgba(255, 255, 255, 0.08)' }}>
+            {hasPin && (
+              <div style={{ marginBottom: '1rem' }}>
+                <label htmlFor='current-pwd'>Current Account Password</label>
+                <input
+                  id='current-pwd'
+                  type='password'
+                  placeholder='Enter password to authorize change'
+                  value={pinPassword}
+                  onChange={(e) => setPinPassword(e.target.value)}
+                  className='form-control-input'
+                  required
+                />
+              </div>
+            )}
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '10px', marginBottom: '1rem' }}>
+              <div>
+                <label htmlFor='new-pin'>New 6-Digit PIN</label>
+                <input
+                  id='new-pin'
+                  type='password'
+                  maxLength={6}
+                  inputMode='numeric'
+                  placeholder='••••••'
+                  value={newPin}
+                  onChange={(e) => setNewPin(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                  className='form-control-input'
+                  required
+                />
+              </div>
+              <div>
+                <label htmlFor='confirm-pin'>Confirm 6-Digit PIN</label>
+                <input
+                  id='confirm-pin'
+                  type='password'
+                  maxLength={6}
+                  inputMode='numeric'
+                  placeholder='••••••'
+                  value={confirmPinVal}
+                  onChange={(e) => setConfirmPinVal(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                  className='form-control-input'
+                  required
+                />
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', gap: '10px' }}>
+              <button
+                type='submit'
+                disabled={pinLoading || newPin.length !== 6 || confirmPinVal.length !== 6}
+                className='btn-primary-action'
+                style={{ flex: 1 }}
+              >
+                {pinLoading ? 'Saving PIN...' : hasPin ? 'Update PIN' : 'Save 6-Digit PIN'}
+              </button>
+              <button
+                type='button'
+                onClick={() => {
+                  setShowPinForm(false);
+                  setPinError('');
+                }}
+                className='btn-secondary-action'
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
+        )}
+
+        {pinError && <div className='status-msg status-msg-error' style={{ marginTop: '1rem' }}>{pinError}</div>}
+        {pinMsg && <div className='status-msg status-msg-success' style={{ marginTop: '1rem' }}>{pinMsg}</div>}
+      </div>
 
       {/* Account Settings / Actions */}
       <div className='glass-card' style={{ marginBottom: '1.5rem' }}>

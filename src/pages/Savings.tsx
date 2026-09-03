@@ -11,6 +11,8 @@ interface Vault {
   currency: string;
   balance: number;
   aer_rate: number;
+  total_interest_earned?: number;
+  last_interest_at?: string;
 }
 
 const Savings: React.FC = () => {
@@ -96,27 +98,47 @@ const Savings: React.FC = () => {
     return v ? v.balance.toFixed(2) : '0.00';
   };
 
+  const getDailyEst = (curr: string) => {
+    const v = vaults.find((vault) => vault.currency === curr);
+    if (!v || v.balance <= 0) return '0.00';
+    const dailyRate = (v.aer_rate / 100) / 365;
+    return (v.balance * dailyRate).toFixed(3);
+  };
+
+  const totalInterestEarnedAll = vaults.reduce((acc, v) => acc + (v.total_interest_earned || 0), 0);
+  const activeSymbol = selectedCurrency === 'EUR' ? '€' : selectedCurrency === 'USD' ? '$' : '£';
+
   return (
     <Layout>
       <Divider />
 
       <h1 className='title no-select'>High-Yield Savings Vaults</h1>
 
-      {/* Balance Readout */}
-      <div className='balance-readout' style={{ padding: '1rem' }}>
-        <p className='label' style={{ fontSize: '0.8rem' }}>Primary Wallet Available</p>
-        <h2 className='value' style={{ fontSize: '1.8rem' }}>
-          {walletCurrency === 'EUR' ? '€' : walletCurrency === 'USD' ? '$' : '£'} {walletBalance.toFixed(2)}
-        </h2>
+      {/* Balance Readout & Yield Stats */}
+      <div className='balance-readout' style={{ padding: '1.25rem' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '12px' }}>
+          <div>
+            <p className='label' style={{ fontSize: '0.8rem' }}>Primary Wallet Available</p>
+            <h2 className='value' style={{ fontSize: '1.8rem', margin: '2px 0 0 0' }}>
+              {walletCurrency === 'EUR' ? '€' : walletCurrency === 'USD' ? '$' : '£'} {walletBalance.toFixed(2)}
+            </h2>
+          </div>
+          <div style={{ textAlign: 'right' }}>
+            <p className='label' style={{ fontSize: '0.8rem', color: '#10b981' }}>Total Interest Earned</p>
+            <h2 className='value' style={{ fontSize: '1.4rem', color: '#34d399', margin: '2px 0 0 0' }}>
+              +{walletCurrency === 'EUR' ? '€' : walletCurrency === 'USD' ? '$' : '£'} {totalInterestEarnedAll.toFixed(2)}
+            </h2>
+          </div>
+        </div>
       </div>
 
       <p className='information text-shadow' style={{ textAlign: 'center', marginBottom: '1.25rem' }}>
-        Select a currency vault below to lock funds and earn automated interest.
+        Select a currency vault below to lock funds and earn daily compounding interest.
       </p>
 
       <div className='history' style={{ marginBottom: '1.25rem' }}>
         <Currency
-          aer={`${getVaultRate('GBP')} • Bal: £${getVaultBalance('GBP')}`}
+          aer={`${getVaultRate('GBP')} • Bal: £${getVaultBalance('GBP')} • Est. +£${getDailyEst('GBP')}/day`}
           name='British Pound Vault'
           shortName='GBP'
           active={selectedCurrency === 'GBP'}
@@ -130,7 +152,7 @@ const Savings: React.FC = () => {
         </Currency>
 
         <Currency
-          aer={`${getVaultRate('USD')} • Bal: $${getVaultBalance('USD')}`}
+          aer={`${getVaultRate('USD')} • Bal: $${getVaultBalance('USD')} • Est. +$${getDailyEst('USD')}/day`}
           name='US Dollar Vault'
           shortName='USD'
           active={selectedCurrency === 'USD'}
@@ -144,7 +166,7 @@ const Savings: React.FC = () => {
         </Currency>
 
         <Currency
-          aer={`${getVaultRate('EUR')} • Bal: €${getVaultBalance('EUR')}`}
+          aer={`${getVaultRate('EUR')} • Bal: €${getVaultBalance('EUR')} • Est. +€${getDailyEst('EUR')}/day`}
           name='Euro Vault'
           shortName='EUR'
           active={selectedCurrency === 'EUR'}
@@ -158,7 +180,40 @@ const Savings: React.FC = () => {
         </Currency>
       </div>
 
-      <div className='glass-card'>
+      <div className='glass-card' style={{ marginBottom: '1.5rem' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', borderBottom: '1px solid rgba(255, 255, 255, 0.08)', paddingBottom: '0.75rem' }}>
+          <div>
+            <h3 style={{ margin: 0, fontSize: '1.15rem', color: '#ffffff' }}>{selectedCurrency} Savings Breakdown</h3>
+            <p style={{ margin: '2px 0 0 0', fontSize: '0.82rem', color: '#94a3b8' }}>
+              Automated compounding interest credited daily at 00:00 UTC
+            </p>
+          </div>
+          <div style={{ background: 'rgba(59, 130, 246, 0.15)', border: '1px solid rgba(59, 130, 246, 0.3)', color: '#93c5fd', padding: '4px 10px', borderRadius: '8px', fontSize: '0.82rem', fontWeight: 600 }}>
+            {getVaultRate(selectedCurrency)}
+          </div>
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '10px', marginBottom: '1.25rem' }}>
+          <div style={{ background: 'rgba(15, 23, 42, 0.5)', padding: '10px 12px', borderRadius: '10px', border: '1px solid rgba(255, 255, 255, 0.05)' }}>
+            <span style={{ fontSize: '0.75rem', color: '#94a3b8' }}>Vault Balance</span>
+            <p style={{ margin: '4px 0 0 0', fontWeight: 700, fontSize: '1.1rem', color: '#ffffff' }}>
+              {activeSymbol} {getVaultBalance(selectedCurrency)}
+            </p>
+          </div>
+          <div style={{ background: 'rgba(15, 23, 42, 0.5)', padding: '10px 12px', borderRadius: '10px', border: '1px solid rgba(255, 255, 255, 0.05)' }}>
+            <span style={{ fontSize: '0.75rem', color: '#94a3b8' }}>Est. Daily Return</span>
+            <p style={{ margin: '4px 0 0 0', fontWeight: 700, fontSize: '1.1rem', color: '#34d399' }}>
+              +{activeSymbol} {getDailyEst(selectedCurrency)}
+            </p>
+          </div>
+          <div style={{ background: 'rgba(15, 23, 42, 0.5)', padding: '10px 12px', borderRadius: '10px', border: '1px solid rgba(255, 255, 255, 0.05)' }}>
+            <span style={{ fontSize: '0.75rem', color: '#94a3b8' }}>Interest Paid to Date</span>
+            <p style={{ margin: '4px 0 0 0', fontWeight: 700, fontSize: '1.1rem', color: '#60a5fa' }}>
+              +{activeSymbol} {(activeVault?.total_interest_earned || 0).toFixed(2)}
+            </p>
+          </div>
+        </div>
+
         <div style={{ display: 'flex', gap: '8px', marginBottom: '1.25rem' }}>
           <button
             type='button'

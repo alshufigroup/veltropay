@@ -4,6 +4,11 @@ import History from '../components/History/History';
 import Divider from '../components/Divider/Divider';
 import { api } from '../api';
 import { AuthContext } from '../context/AuthContext';
+import TransactionPinModal from '../components/Security/TransactionPinModal';
+
+const generateIdempotencyKey = () => {
+  return `idemp_${Date.now()}_${Math.random().toString(36).substring(2, 10)}`;
+};
 
 const Transactions: React.FC = () => {
   const { isAuthenticated } = useContext(AuthContext);
@@ -16,7 +21,6 @@ const Transactions: React.FC = () => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [isLookingUp, setIsLookingUp] = useState(false);
-  const [isSending, setIsSending] = useState(false);
 
   // Withdrawal State
   const [wBeneficiary, setWBeneficiary] = useState('');
@@ -24,13 +28,18 @@ const Transactions: React.FC = () => {
   const [wBic, setWBic] = useState('');
   const [wAmount, setWAmount] = useState('');
   const [wReference, setWReference] = useState('');
-  const [wLoading, setWLoading] = useState(false);
   const [wError, setWError] = useState('');
   const [wSuccess, setWSuccess] = useState('');
 
   // Primary Wallet
   const [currency, setCurrency] = useState('EUR');
   const [balance, setBalance] = useState(0);
+
+  // PIN Security Modal State
+  const [isPinModalOpen, setIsPinModalOpen] = useState(false);
+  const [pinAction, setPinAction] = useState<'p2p' | 'withdraw'>('p2p');
+  const [pinLoading, setPinLoading] = useState(false);
+  const [pinError, setPinError] = useState('');
 
   useEffect(() => {
     if (!isAuthenticated) return;
@@ -66,33 +75,30 @@ const Transactions: React.FC = () => {
     }
   };
 
-  const sendMoney = async () => {
+  const handleP2PSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
     const numAmount = parseFloat(amount);
     if (isNaN(numAmount) || numAmount <= 0) {
       setError('Please enter a valid amount');
       return;
     }
-    try {
-      setError('');
-      setSuccess('');
-      setIsSending(true);
-      await api.post('/transactions/send', {
-        receiver_account: accountNumber,
-        amount: numAmount
-      });
-      setSuccess(`Successfully sent ${recipient?.currency || ''} ${numAmount.toFixed(2)} to ${recipient?.full_name}!`);
-      setBalance((prev) => Math.max(0, prev - numAmount));
-      setAmount('');
-      setAccountNumber('');
-      setRecipient(null);
-    } catch (err: any) {
-      setError(err.response?.data?.detail || 'Failed to send money');
-    } finally {
-      setIsSending(false);
+    if (!recipient) {
+      setError('Please search and verify the recipient account first');
+      return;
     }
+    if (numAmount > balance) {
+      setError(`Insufficient balance. Available: ${currency} ${balance.toFixed(2)}`);
+      return;
+    }
+
+    setError('');
+    setSuccess('');
+    setPinError('');
+    setPinAction('p2p');
+    setIsPinModalOpen(true);
   };
 
-  const handleWithdraw = async (e: React.FormEvent) => {
+  const handleWithdrawSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const numAmount = parseFloat(wAmount);
     if (isNaN(numAmount) || numAmount <= 0) {
@@ -103,30 +109,76 @@ const Transactions: React.FC = () => {
       setWError('Please fill in all recipient banking fields');
       return;
     }
+    if (numAmount > balance) {
+      setWError(`Insufficient balance. Available: ${currency} ${balance.toFixed(2)}`);
+      return;
+    }
 
     setWError('');
     setWSuccess('');
-    setWLoading(true);
+    setPinError('');
+    setPinAction('withdraw');
+    setIsPinModalOpen(true);
+  };
+
+  const handlePinConfirm = async (pin: string) => {
+    setPinLoading(true);
+    setPinError('');
+    const idempKey = generateIdempotencyKey();
 
     try {
-      const res = await api.post('/transactions/withdraw', {
-        beneficiary_name: wBeneficiary,
-        iban: wIban,
-        bic: wBic,
-        amount: numAmount,
-        reference: wReference || undefined
-      });
-      setWSuccess(res.data?.message || `Withdrawal of ${currency} ${numAmount.toFixed(2)} submitted successfully!`);
-      setBalance(res.data?.new_balance ?? (balance - numAmount));
-      setWAmount('');
-      setWIban('');
-      setWBic('');
-      setWBeneficiary('');
-      setWReference('');
+      if (pinAction === 'p2p') {
+        const numAmount = parseFloat(amount);
+        await api.post(
+          '/transactions/send',
+          {
+            receiver_account: accountNumber,
+            amount: numAmount,
+            pin: pin
+          },
+          {
+            headers: { 'Idempotency-Key': idempKey }
+          }
+        );
+
+        setSuccess(`Successfully transferred ${recipient?.currency || currency} ${numAmount.toFixed(2)} to ${recipient?.full_name}!`);
+        setBalance((prev) => Math.max(0, prev - numAmount));
+        setAmount('');
+        setAccountNumber('');
+        setRecipient(null);
+        setIsPinModalOpen(false);
+      } else {
+        const numAmount = parseFloat(wAmount);
+        const res = await api.post(
+          '/transactions/withdraw',
+          {
+            beneficiary_name: wBeneficiary,
+            iban: wIban,
+            bic: wBic,
+            amount: numAmount,
+            reference: wReference || undefined,
+            pin: pin
+          },
+          {
+            headers: { 'Idempotency-Key': idempKey }
+          }
+        );
+
+        setWSuccess(res.data?.message || `Withdrawal of ${currency} ${numAmount.toFixed(2)} submitted successfully!`);
+        setBalance(res.data?.new_balance ?? Math.max(0, balance - numAmount));
+        setWAmount('');
+        setWIban('');
+        setWBic('');
+        setWBeneficiary('');
+        setWReference('');
+        setIsPinModalOpen(false);
+      }
     } catch (err: any) {
-      setWError(err.response?.data?.detail || 'Failed to submit withdrawal request.');
+      const errorMsg = err.response?.data?.detail || 'Transaction failed. Please verify your PIN.';
+      setPinError(errorMsg);
+      throw err;
     } finally {
-      setWLoading(false);
+      setPinLoading(false);
     }
   };
 
@@ -228,12 +280,11 @@ const Transactions: React.FC = () => {
                 className='form-control-input'
               />
               <button 
-                type='button'
-                onClick={sendMoney}
-                disabled={isSending}
+                type='button' 
+                onClick={handleP2PSubmit}
                 className='btn-primary-action'
               >
-                {isSending ? 'Sending Transfer...' : `Transfer ${amount ? recipient.currency + ' ' + amount : 'Now'}`}
+                {`Transfer ${amount ? (recipient.currency + ' ' + amount) : 'Now'}`}
               </button>
             </div>
           )}
@@ -250,7 +301,7 @@ const Transactions: React.FC = () => {
             Transfer funds out of your VeltroPay balance directly to your personal or corporate bank account.
           </p>
 
-          <form onSubmit={handleWithdraw}>
+          <form onSubmit={handleWithdrawSubmit}>
             <label htmlFor='w-name'>Beneficiary Legal Name</label>
             <input 
               id='w-name'
@@ -290,8 +341,8 @@ const Transactions: React.FC = () => {
               <input 
                 id='w-amount'
                 type='number' 
-                step='0.01'
-                min='1'
+                step='0.01' 
+                min='1' 
                 placeholder='0.00'
                 value={wAmount}
                 onChange={(e) => setWAmount(e.target.value)}
@@ -311,10 +362,9 @@ const Transactions: React.FC = () => {
 
             <button 
               type='submit' 
-              disabled={wLoading}
               className='btn-primary-action'
             >
-              {wLoading ? 'Submitting Payout...' : `Withdraw ${wAmount ? symbol + wAmount : 'Funds'} to External Bank`}
+              {`Withdraw ${wAmount ? symbol + wAmount : 'Funds'} to External Bank`}
             </button>
           </form>
 
@@ -322,6 +372,34 @@ const Transactions: React.FC = () => {
           {wSuccess && <div className='status-msg status-msg-success'>{wSuccess}</div>}
         </div>
       )}
+
+      {/* 2FA Transaction Security PIN Modal */}
+      <TransactionPinModal
+        isOpen={isPinModalOpen}
+        onClose={() => {
+          setIsPinModalOpen(false);
+          setPinError('');
+        }}
+        onConfirm={handlePinConfirm}
+        title={pinAction === 'p2p' ? 'Authorize P2P Transfer' : 'Authorize Bank Withdrawal'}
+        subtitle={
+          pinAction === 'p2p'
+            ? 'Enter your 6-digit Transaction PIN to complete transfer.'
+            : 'Enter your 6-digit Transaction PIN to authorize outward wire transfer.'
+        }
+        amountDisplay={
+          pinAction === 'p2p'
+            ? `${recipient?.currency || currency} ${parseFloat(amount || '0').toFixed(2)}`
+            : `${currency} ${parseFloat(wAmount || '0').toFixed(2)}`
+        }
+        recipientDisplay={
+          pinAction === 'p2p'
+            ? `${recipient?.full_name} (${accountNumber})`
+            : `${wBeneficiary} • ${wIban}`
+        }
+        isLoading={pinLoading}
+        errorMessage={pinError}
+      />
 
       <Divider />
       <h2 className='title no-select' style={{ fontSize: '1.35rem' }}>Transaction Activity</h2>
