@@ -1975,3 +1975,202 @@ footer {
     margin-top: 15px;
   }
 }
+
+/* ==========================================================================
+   CASH APP / REVOLUT STYLE TRANSACTION RECEIPT MODAL
+   ========================================================================== */
+.receipt-modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(4, 7, 14, 0.82);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1.25rem;
+  animation: receiptFadeIn 0.22s ease-out;
+}
+
+@keyframes receiptFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.receipt-modal {
+  background: #0f172a;
+  background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 28px;
+  width: 100%;
+  max-width: 440px;
+  padding: 2rem 1.75rem 1.75rem 1.75rem;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6), 0 0 40px rgba(59, 130, 246, 0.15);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: receiptSlideUp 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes receiptSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.receipt-close-btn {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #94a3b8;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.receipt-close-btn:hover {
+  background: rgba(255, 255, 255, 0.18);
+  color: #ffffff;
+}
+
+.receipt-avatar {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  border: 2px solid;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.2rem;
+}
+
+.receipt-amount-container {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  margin-bottom: 0.4rem;
+}
+
+.receipt-amount {
+  font-size: 2.3rem;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  margin: 0;
+}
+
+.receipt-currency-tag {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #94a3b8;
+}
+
+.receipt-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(16, 185, 129, 0.14);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  color: #6ee7b7;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 9999px;
+  margin-bottom: 0.75rem;
+}
+
+.receipt-title {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #cbd5e1;
+  text-align: center;
+  margin: 0 0 1.5rem 0;
+  max-width: 90%;
+  line-height: 1.4;
+}
+
+.receipt-table {
+  width: 100%;
+  background: rgba(15, 23, 42, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 18px;
+  padding: 0.5rem 1.1rem;
+  margin-bottom: 1.5rem;
+}
+
+.receipt-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  font-size: 0.88rem;
+}
+
+.receipt-label {
+  color: #94a3b8;
+  font-weight: 500;
+}
+
+.receipt-value {
+  color: #ffffff;
+  font-weight: 600;
+  text-align: right;
+}
+
+.receipt-value-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.receipt-copy-mini {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #94a3b8;
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.receipt-copy-mini span {
+  font-size: 0.95rem;
+}
+
+.receipt-copy-mini:hover {
+  background: #3b82f6;
+  color: #ffffff;
+}
+
+.receipt-actions {
+  display: flex;
+  width: 100%;
+  gap: 10px;
+}
+
+.history-line:hover {
+  background: rgba(255, 255, 255, 0.06);
+  transform: translateX(3px);
+}
+

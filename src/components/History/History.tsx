@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import HistoryLine from './HistoryLine';
+import ReceiptModal, { TransactionDetails } from './ReceiptModal';
 import { api } from '../../api';
 import { AuthContext } from '../../context/AuthContext';
 
@@ -10,6 +11,8 @@ interface TransactionResponse {
   receiver_account: string;
   amount: number;
   currency: string;
+  tx_type?: string;
+  description?: string;
   timestamp: string;
   status: string;
 }
@@ -27,7 +30,9 @@ const History: React.FC<IProps> = ({
 }) => {
   const { isAuthenticated } = useContext(AuthContext);
   const [transactions, setTransactions] = useState<TransactionResponse[]>([]);
+  const [userAccount, setUserAccount] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(true);
+  const [selectedTx, setSelectedTx] = useState<TransactionDetails | null>(null);
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -35,10 +40,17 @@ const History: React.FC<IProps> = ({
       return;
     }
 
-    const fetchHistory = async () => {
+    const fetchHistoryAndWallet = async () => {
       try {
-        const res = await api.get('/transactions/history');
-        setTransactions(res.data);
+        const [historyRes, walletRes] = await Promise.all([
+          api.get('/transactions/history'),
+          api.get('/wallets/').catch(() => ({ data: [] }))
+        ]);
+
+        setTransactions(historyRes.data);
+        if (walletRes.data && walletRes.data.length > 0) {
+          setUserAccount(walletRes.data[0].account_number);
+        }
       } catch (err) {
         console.error('Failed to fetch transaction history', err);
       } finally {
@@ -46,7 +58,7 @@ const History: React.FC<IProps> = ({
       }
     };
 
-    fetchHistory();
+    fetchHistoryAndWallet();
   }, [isAuthenticated]);
 
   const getCurrencySymbol = (curr: string) => {
@@ -63,6 +75,37 @@ const History: React.FC<IProps> = ({
     } catch {
       return '12:00';
     }
+  };
+
+  const getItemDetails = (tx: TransactionResponse) => {
+    const isIncoming = tx.receiver_account === userAccount || tx.tx_type === 'deposit';
+    let icon = 'sync_alt';
+    let color = 'blue';
+    let name = `Transfer to ${tx.receiver_account}`;
+
+    if (tx.tx_type === 'deposit' || (isIncoming && tx.sender_account.includes('SEPA'))) {
+      icon = 'account_balance';
+      color = 'green';
+      name = 'SEPA Wire Deposit';
+    } else if (tx.tx_type === 'withdrawal') {
+      icon = 'north_east';
+      color = 'orange';
+      name = `Payout to ${tx.receiver_account.substring(0, 8)}...`;
+    } else if (tx.tx_type === 'savings_deposit' || tx.tx_type === 'savings_withdraw') {
+      icon = 'savings';
+      color = 'purple';
+      name = tx.description || 'Savings Vault Transfer';
+    } else if (isIncoming) {
+      icon = 'arrow_downward';
+      color = 'green';
+      name = `Transfer from ${tx.sender_account}`;
+    } else {
+      icon = 'arrow_upward';
+      color = 'blue';
+      name = `Transfer to ${tx.receiver_account}`;
+    }
+
+    return { isIncoming, icon, color, name };
   };
 
   return (
@@ -88,20 +131,30 @@ const History: React.FC<IProps> = ({
             ))}
           </div>
         ) : transactions.length > 0 ? (
-          transactions.map((tx) => (
-            <HistoryLine
-              key={tx.id}
-              item={{
-                id: tx.id,
-                icon: 'sync_alt',
-                time: formatTime(tx.timestamp),
-                name: `Transfer to/from ${tx.receiver_account}`,
-                amount: tx.amount,
-                color: 'blue',
-                currencySymbol: getCurrencySymbol(tx.currency),
-              }}
-            />
-          ))
+          transactions.map((tx) => {
+            const { isIncoming, icon, color, name } = getItemDetails(tx);
+            return (
+              <HistoryLine
+                key={tx.id}
+                onClick={() => {
+                  setSelectedTx({
+                    ...tx,
+                    is_incoming: isIncoming
+                  });
+                }}
+                item={{
+                  id: tx.id,
+                  icon: icon,
+                  time: formatTime(tx.timestamp),
+                  name: tx.description || name,
+                  amount: tx.amount,
+                  color: color,
+                  currencySymbol: getCurrencySymbol(tx.currency),
+                  isIncoming: isIncoming
+                }}
+              />
+            );
+          })
         ) : (
           <div style={{ textAlign: 'center', padding: '1.75rem 1rem' }}>
             <span className='material-symbols-outlined' style={{ fontSize: '2.5rem', opacity: 0.5, marginBottom: '0.5rem' }}>
@@ -119,6 +172,12 @@ const History: React.FC<IProps> = ({
           </Link>
         )}
       </div>
+
+      {/* Cash App Style Transaction Receipt Modal */}
+      <ReceiptModal 
+        transaction={selectedTx} 
+        onClose={() => setSelectedTx(null)} 
+      />
     </>
   );
 };
