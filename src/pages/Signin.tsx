@@ -38,63 +38,62 @@ const Signin: React.FC = () => {
   };
 
   return (
-    <div className='flex flex-v-center flex-h-center h-full'>
+    <div className='auth-wrapper'>
       <div className='bg' />
-      <div className='text'>
-        <h1 className='text-shadow'>Hello! 👋</h1>
-        <p className='text-shadow'>Please sign in to your Veltrobridge account.</p>
+      <div className='auth-card'>
+        <div className='auth-brand'>
+          <div className='auth-brand-badge'>⚡</div>
+          <h2>VeltroPay</h2>
+        </div>
+        <p className='auth-subtitle'>
+          Sign in to your VeltroPay account to manage balances, cards, and instant transfers.
+        </p>
 
-        <form method='post' className='form' noValidate onSubmit={handleSubmit}>
-          <div className='form-line'>
-            <div className='label-line'>
-              <label htmlFor='email' className='text-shadow'>
-                Email
-              </label>
-            </div>
-            <input
-              required
-              name='email'
-              type='email'
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder='Please enter your email'
-              className='form-control-input'
-            />
-          </div>
-          <div className='form-line'>
-            <div className='label-line flex flex-h-center flex-space-between'>
-              <label htmlFor='password' className='text-shadow'>
-                Password
-              </label>
-            </div>
-            <input
-              required
-              name='password'
-              type='password'
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder='Please enter your password'
-              className='form-control-input'
-            />
-          </div>
-          {error && <div className='status-msg status-msg-error' style={{ marginBottom: '15px' }}>{error}</div>}
-          <div className='form-line'>
-            <button 
-              type='submit' 
-              disabled={loading}
-              className='btn-primary-action'
-            >
-              {loading ? 'Signing in...' : 'Sign in'}
-            </button>
-          </div>
+        <form onSubmit={handleSubmit} className='auth-form'>
+          <label htmlFor='signin-email' style={{ marginBottom: '6px', fontSize: '0.88rem' }}>
+            Email Address
+          </label>
+          <input
+            id='signin-email'
+            required
+            name='email'
+            type='email'
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder='name@example.com'
+            className='form-control-input'
+          />
+
+          <label htmlFor='signin-password' style={{ marginBottom: '6px', fontSize: '0.88rem' }}>
+            Password
+          </label>
+          <input
+            id='signin-password'
+            required
+            name='password'
+            type='password'
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder='••••••••'
+            className='form-control-input'
+          />
+
+          {error && <div className='status-msg status-msg-error' style={{ marginBottom: '1.2rem', marginTop: '0' }}>{error}</div>}
+
+          <button 
+            type='submit' 
+            disabled={loading}
+            className='btn-primary-action'
+          >
+            {loading ? 'Signing in...' : 'Sign In'}
+          </button>
         </form>
 
-        <div className='links'>
-          <a href='https://signup.veltrobridge.xyz' className='text-shadow'>
-            Click here
+        <div className='auth-links'>
+          <span>Don&apos;t have an account? </span>
+          <a href='https://signup.veltrobridge.xyz'>
+            Create account
           </a>
-          &nbsp;
-          <span className='text-shadow'>if you don&apos;t have an account</span>
         </div>
       </div>
     </div>

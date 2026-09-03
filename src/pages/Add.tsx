@@ -46,7 +46,7 @@ const Add: React.FC = () => {
     try {
       const res = await api.post(`/wallets/fund_demo?amount=${numAmount}`);
       setCurrentBalance(res.data.new_balance);
-      setMessage(`Successfully added ${currency === 'EUR' ? '€' : '$'}${numAmount.toFixed(2)} to your balance!`);
+      setMessage(`Successfully added ${currency === 'EUR' ? '€' : currency === 'USD' ? '$' : '£'}${numAmount.toFixed(2)} to your balance!`);
       setAmount('50');
     } catch (err: any) {
       setError(err.response?.data?.detail || 'Failed to add money. Please try again.');
@@ -64,22 +64,28 @@ const Add: React.FC = () => {
       <h1 className='title no-select'>Add Money</h1>
 
       <div className='glass-card'>
-        <p className='information' style={{ marginBottom: '0.35rem', opacity: 0.85, fontSize: '0.9rem' }}>Current Account Balance</p>
-        <h2 style={{ fontSize: '2.2rem', marginBottom: '1.25rem', fontWeight: 700 }}>{symbol} {currentBalance.toFixed(2)}</h2>
+        <p style={{ marginBottom: '0.35rem', color: '#94a3b8', fontSize: '0.88rem', textTransform: 'uppercase', letterSpacing: '1px' }}>
+          Current Wallet Balance
+        </p>
+        <h2 style={{ fontSize: '2.5rem', marginBottom: '1.4rem', fontWeight: 700, color: '#ffffff' }}>
+          <span style={{ color: '#93c5fd', fontSize: '1.8rem', marginRight: '4px' }}>{symbol}</span>
+          {currentBalance.toFixed(2)}
+        </h2>
 
         <form onSubmit={handleAddMoney}>
-          <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem', fontWeight: 500 }}>
-            Enter Amount to Deposit ({currency})
+          <label htmlFor='deposit-amount' style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem' }}>
+            Enter Deposit Amount ({currency})
           </label>
           <div className='input-row'>
             <span className='prefix'>{symbol}</span>
             <input 
-              type="number" 
-              step="0.01" 
-              min="1" 
+              id='deposit-amount'
+              type='number' 
+              step='0.01' 
+              min='1' 
               value={amount} 
               onChange={(e) => setAmount(e.target.value)} 
-              placeholder="0.00" 
+              placeholder='0.00' 
               required 
             />
           </div>
@@ -87,7 +93,7 @@ const Add: React.FC = () => {
           <div className='preset-grid'>
             {['20', '50', '100', '250', '500'].map((preset) => (
               <button
-                type="button"
+                type='button'
                 key={preset}
                 onClick={() => setAmount(preset)}
                 className={`preset-btn ${amount === preset ? 'active' : ''}`}
@@ -98,11 +104,11 @@ const Add: React.FC = () => {
           </div>
 
           <button 
-            type="submit" 
+            type='submit' 
             disabled={loading}
             className='btn-primary-action'
           >
-            {loading ? 'Processing Deposit...' : 'Add Money Securely'}
+            {loading ? 'Processing Deposit...' : 'Add Money Instantly'}
           </button>
         </form>
 

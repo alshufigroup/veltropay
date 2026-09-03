@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 
 // components
 import Button from '../components/Form/Button';
@@ -8,6 +8,7 @@ import Currency from '../components/Currency/Currency';
 
 const Savings: React.FC = () => {
   const [selected, setSelected] = useState<string>('');
+  const [feedback, setFeedback] = useState<string>('');
 
   /**
    * Handles the selection of a currency symbol.
@@ -16,20 +17,23 @@ const Savings: React.FC = () => {
    */
   const handleOnSelect = (symbol: string): void => {
     setSelected(symbol);
+    setFeedback('');
+  };
+
+  const handleContinue = () => {
+    if (!selected) return;
+    setFeedback(`Savings vault for ${selected} selected! Vault initialization active.`);
   };
 
   return (
     <Layout>
       <Divider />
 
-      <h1 className='title no-select'>Savings</h1>
+      <h1 className='title no-select'>High-Yield Savings</h1>
 
-      <p className='information text-shadow'>
-        Annual Equivalent Rate or AER, is used to show what you would earn in interest over a year.
-        Please select a currency in the list.
+      <p className='information text-shadow' style={{ textAlign: 'center', marginBottom: '1.25rem' }}>
+        Annual Equivalent Rate (AER) illustrates your annual interest return. Select a currency vault below to begin earning.
       </p>
-
-      <Divider />
 
       <div className='history'>
         <Currency
@@ -85,10 +89,18 @@ const Savings: React.FC = () => {
         </Currency>
       </div>
 
+      {feedback && <div className='status-msg status-msg-success' style={{ marginTop: '1rem' }}>{feedback}</div>}
+
       <Divider />
 
       <div className='add-buttons flex flex-space-between'>
-        <Button type='submit' text='Continue' tabIndex={0} disabled={selected === ''} />
+        <Button 
+          type='button' 
+          text='Continue to Vault Setup' 
+          tabIndex={0} 
+          disabled={selected === ''} 
+          onClick={handleContinue}
+        />
       </div>
 
       <Divider />

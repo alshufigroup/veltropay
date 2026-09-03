@@ -1,15 +1,26 @@
+import React from 'react';
+
 // interfaces
 interface IProps {
-  type: string;
+  type?: string;
   text: string;
-  tabIndex: number;
+  tabIndex?: number;
   disabled?: boolean;
+  onClick?: () => void;
 }
 
-const Button: React.FC<IProps> = ({ type, text, tabIndex, disabled = false }) => (
+const Button: React.FC<IProps> = ({ 
+  type = 'button', 
+  text, 
+  tabIndex = 0, 
+  disabled = false,
+  onClick
+}) => (
   <button
     tabIndex={tabIndex}
     type={type === 'submit' ? 'submit' : 'button'}
+    disabled={disabled}
+    onClick={onClick}
     className={`button ${disabled ? 'disabled' : 'active'}`}
   >
     {text}

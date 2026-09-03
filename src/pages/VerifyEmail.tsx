@@ -30,7 +30,7 @@ const VerifyEmail: React.FC = () => {
       setSuccess('Email verified successfully! Redirecting to login...');
       setTimeout(() => {
         window.location.href = 'https://login.veltrobridge.xyz';
-      }, 3000);
+      }, 2500);
     } catch (err: any) {
       setError(err.response?.data?.detail || 'Verification failed. Please check the code.');
     } finally {
@@ -39,39 +39,64 @@ const VerifyEmail: React.FC = () => {
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100vh', backgroundColor: '#f0f4f8' }}>
-      <div style={{ padding: '2rem', backgroundColor: 'white', borderRadius: '8px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)', width: '360px' }}>
-        <h1 style={{ marginBottom: '1rem', color: '#1a202c', textAlign: 'center', fontSize: '1.75rem' }}>Verify Email</h1>
-        <p style={{ color: '#718096', fontSize: '0.9rem', marginBottom: '1.5rem', textAlign: 'center' }}>
+    <div className='auth-wrapper'>
+      <div className='bg' />
+      <div className='auth-card'>
+        <div className='auth-brand'>
+          <div className='auth-brand-badge'>⚡</div>
+          <h2>VeltroPay</h2>
+        </div>
+        <p className='auth-subtitle'>
           Please enter the 6-digit verification code sent to your email address.
         </p>
-        <form onSubmit={handleVerify} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+
+        <form onSubmit={handleVerify} className='auth-form'>
+          <label htmlFor='verify-email' style={{ marginBottom: '6px', fontSize: '0.88rem' }}>
+            Email Address
+          </label>
           <input 
-            type="email" 
-            placeholder="Email Address" 
+            id='verify-email'
+            type='email' 
+            placeholder='name@example.com' 
             value={email} 
             onChange={(e) => setEmail(e.target.value)} 
             required 
-            style={{ padding: '0.75rem', borderRadius: '4px', border: '1px solid #cbd5e0' }}
+            className='form-control-input'
           />
+
+          <label htmlFor='verify-code' style={{ marginBottom: '6px', fontSize: '0.88rem' }}>
+            6-Digit Verification Code
+          </label>
           <input 
-            type="text" 
-            placeholder="6-Digit Verification Code" 
+            id='verify-code'
+            type='text' 
+            placeholder='123456' 
             value={code} 
             onChange={(e) => setCode(e.target.value)} 
             required 
             maxLength={6}
-            style={{ padding: '0.75rem', borderRadius: '4px', border: '1px solid #cbd5e0', textAlign: 'center', fontSize: '1.25rem', letterSpacing: '4px' }}
+            style={{ textAlign: 'center', fontSize: '1.4rem', letterSpacing: '6px', fontFamily: 'monospace', fontWeight: 700 }}
+            className='form-control-input'
           />
-          <button disabled={loading} type="submit" style={{ padding: '0.75rem', backgroundColor: loading ? '#a0aec0' : '#3182ce', color: 'white', border: 'none', borderRadius: '4px', cursor: loading ? 'not-allowed' : 'pointer', fontWeight: 'bold' }}>
-            {loading ? 'Verifying...' : 'Verify & Activate'}
+
+          {error && <div className='status-msg status-msg-error' style={{ marginBottom: '1.2rem', marginTop: '0' }}>{error}</div>}
+          {success && <div className='status-msg status-msg-success' style={{ marginBottom: '1.2rem', marginTop: '0' }}>{success}</div>}
+
+          <button 
+            type='submit' 
+            disabled={loading}
+            className='btn-primary-action'
+          >
+            {loading ? 'Verifying...' : 'Verify & Activate Account'}
           </button>
         </form>
-        {error && <p style={{ color: '#e53e3e', marginTop: '1rem', textAlign: 'center', fontSize: '0.9rem' }}>{error}</p>}
-        {success && <p style={{ color: '#38a169', marginTop: '1rem', textAlign: 'center', fontSize: '0.9rem', fontWeight: 'bold' }}>{success}</p>}
-        <p style={{ marginTop: '1.5rem', textAlign: 'center', fontSize: '0.875rem' }}>
-          Back to <a href="https://login.veltrobridge.xyz" style={{ color: '#3182ce' }}>Login</a>
-        </p>
+
+        <div className='auth-links'>
+          <span>Back to </span>
+          <a href='https://login.veltrobridge.xyz'>
+            Sign in
+          </a>
+        </div>
       </div>
     </div>
   );
