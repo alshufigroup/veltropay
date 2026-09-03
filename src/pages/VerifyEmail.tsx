@@ -43,7 +43,9 @@ const VerifyEmail: React.FC = () => {
       <div className='bg' />
       <div className='auth-card'>
         <div className='auth-brand'>
-          <div className='auth-brand-badge'>⚡</div>
+          <div className='auth-brand-badge'>
+            <span className='material-symbols-outlined'>bolt</span>
+          </div>
           <h2>VeltroPay</h2>
         </div>
         <p className='auth-subtitle'>
@@ -51,9 +53,7 @@ const VerifyEmail: React.FC = () => {
         </p>
 
         <form onSubmit={handleVerify} className='auth-form'>
-          <label htmlFor='verify-email' style={{ marginBottom: '6px', fontSize: '0.88rem' }}>
-            Email Address
-          </label>
+          <label htmlFor='verify-email'>Email Address</label>
           <input 
             id='verify-email'
             type='email' 
@@ -64,9 +64,7 @@ const VerifyEmail: React.FC = () => {
             className='form-control-input'
           />
 
-          <label htmlFor='verify-code' style={{ marginBottom: '6px', fontSize: '0.88rem' }}>
-            6-Digit Verification Code
-          </label>
+          <label htmlFor='verify-code'>6-Digit Verification Code</label>
           <input 
             id='verify-code'
             type='text' 

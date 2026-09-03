@@ -62,7 +62,7 @@ const Transactions: React.FC = () => {
       <h1 className='title no-select'>Send Money (P2P)</h1>
       
       <div className='glass-card'>
-        <label htmlFor='p2p-account' style={{ display: 'block', marginBottom: '6px', fontSize: '0.9rem' }}>
+        <label htmlFor='p2p-account'>
           Recipient Account Number
         </label>
         <div style={{ display: 'flex', gap: '8px', marginBottom: '1rem' }}>
@@ -93,7 +93,9 @@ const Transactions: React.FC = () => {
             </p>
             <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1.25rem' }}>
               <div style={{ width: '46px', height: '46px', borderRadius: '50%', background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: '1.2rem', boxShadow: '0 4px 12px rgba(59, 130, 246, 0.4)' }}>
-                {recipient.full_name ? recipient.full_name[0].toUpperCase() : '👤'}
+                {recipient.full_name ? recipient.full_name[0].toUpperCase() : (
+                  <span className='material-symbols-outlined' style={{ fontSize: '1.4rem' }}>person</span>
+                )}
               </div>
               <div>
                 <p style={{ margin: 0, fontWeight: 700, color: '#ffffff', fontSize: '1.05rem' }}>{recipient.full_name}</p>
@@ -101,7 +103,7 @@ const Transactions: React.FC = () => {
               </div>
             </div>
 
-            <label htmlFor='p2p-amount' style={{ display: 'block', marginBottom: '6px', fontSize: '0.9rem' }}>
+            <label htmlFor='p2p-amount'>
               Amount to Transfer ({recipient.currency})
             </label>
             <input 

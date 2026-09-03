@@ -33,7 +33,9 @@ const Signup: React.FC = () => {
       <div className='bg' />
       <div className='auth-card'>
         <div className='auth-brand'>
-          <div className='auth-brand-badge'>⚡</div>
+          <div className='auth-brand-badge'>
+            <span className='material-symbols-outlined'>bolt</span>
+          </div>
           <h2>VeltroPay</h2>
         </div>
         <p className='auth-subtitle'>
@@ -41,9 +43,7 @@ const Signup: React.FC = () => {
         </p>
 
         <form onSubmit={handleSignup} className='auth-form'>
-          <label htmlFor='signup-name' style={{ marginBottom: '6px', fontSize: '0.88rem' }}>
-            Full Legal Name
-          </label>
+          <label htmlFor='signup-name'>Full Legal Name</label>
           <input 
             id='signup-name'
             type='text' 
@@ -54,9 +54,7 @@ const Signup: React.FC = () => {
             className='form-control-input'
           />
 
-          <label htmlFor='signup-email' style={{ marginBottom: '6px', fontSize: '0.88rem' }}>
-            Email Address
-          </label>
+          <label htmlFor='signup-email'>Email Address</label>
           <input 
             id='signup-email'
             type='email' 
@@ -67,9 +65,7 @@ const Signup: React.FC = () => {
             className='form-control-input'
           />
 
-          <label htmlFor='signup-password' style={{ marginBottom: '6px', fontSize: '0.88rem' }}>
-            Password
-          </label>
+          <label htmlFor='signup-password'>Password</label>
           <input 
             id='signup-password'
             type='password' 
@@ -80,9 +76,7 @@ const Signup: React.FC = () => {
             className='form-control-input'
           />
 
-          <label htmlFor='signup-currency' style={{ marginBottom: '6px', fontSize: '0.88rem' }}>
-            Primary Account Currency
-          </label>
+          <label htmlFor='signup-currency'>Primary Account Currency</label>
           <select 
             id='signup-currency'
             value={currency} 

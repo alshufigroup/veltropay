@@ -124,8 +124,10 @@ p {
 label {
   font-weight: 500;
   user-select: none;
-  font-size: 0.9rem;
+  font-size: 0.88rem;
   color: var(--text-muted);
+  display: block;
+  margin-bottom: 6px;
 }
 
 input,
@@ -435,20 +437,20 @@ header .header-button span {
 .actions {
   display: flex;
   justify-content: center;
-  gap: 16px;
+  gap: 14px;
   margin: 8px 0 24px 0;
 }
 
 .actions .circle {
   flex: 1;
-  max-width: 90px;
+  max-width: 85px;
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
 .actions .circle .text-shadow {
-  font-size: 0.85rem;
+  font-size: 0.82rem;
   font-weight: 500;
   margin-top: 8px;
   white-space: nowrap;
@@ -473,7 +475,7 @@ header .header-button span {
 
 .actions a span,
 .actions button span {
-  font-size: 1.6rem;
+  font-size: 1.55rem;
   color: #ffffff;
 }
 
@@ -503,7 +505,6 @@ header .header-button span {
   overflow: hidden;
 }
 
-/* Backwards compatibility helper for former light card */
 .glass-card-light {
   padding: 1.6rem;
   background: var(--bg-card);
@@ -516,22 +517,17 @@ header .header-button span {
   margin-bottom: 22px;
 }
 
-.glass-card-light h3,
-.glass-card h3 {
+.glass-card h3,
+.glass-card-light h3 {
   color: var(--text-main) !important;
   font-weight: 600;
   font-size: 1.2rem;
 }
 
-.glass-card-light p,
-.glass-card p {
+.glass-card p,
+.glass-card-light p {
   color: var(--text-muted);
   font-size: 0.92rem;
-}
-
-.glass-card-light label,
-.glass-card label {
-  color: var(--text-muted);
 }
 
 .balance-readout {
@@ -549,6 +545,8 @@ header .header-button span {
   font-size: 0.88rem;
   color: var(--text-muted);
   margin-bottom: 0.25rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 .balance-readout .value {
@@ -556,6 +554,115 @@ header .header-button span {
   font-weight: 700;
   letter-spacing: -0.03em;
   color: var(--text-main);
+}
+
+/* ==========================================================================
+   DEDICATED SEPA IBAN BANKING CARD & WIRE DEPOSIT
+   ========================================================================== */
+
+.iban-card {
+  background: linear-gradient(135deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.95) 100%);
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(59, 130, 246, 0.35);
+  padding: 1.5rem;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.15);
+  margin-bottom: 1.5rem;
+}
+
+.iban-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 1rem;
+  margin-bottom: 1.25rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.iban-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: var(--radius-full);
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid rgba(16, 185, 129, 0.35);
+  color: #6ee7b7;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.iban-badge.pending {
+  background: rgba(245, 158, 11, 0.15);
+  border-color: rgba(245, 158, 11, 0.35);
+  color: #fcd34d;
+}
+
+.iban-badge.unverified {
+  background: rgba(244, 63, 94, 0.15);
+  border-color: rgba(244, 63, 94, 0.35);
+  color: #fda4af;
+}
+
+.iban-detail-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.iban-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(15, 23, 42, 0.6);
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.iban-row-label {
+  font-size: 0.82rem;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+}
+
+.iban-row-value-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.iban-row-value {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.btn-copy {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: var(--radius-xs);
+  background: var(--bg-glass);
+  border: 1px solid var(--border-glass);
+  color: var(--primary);
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.btn-copy:hover {
+  background: var(--primary-gradient);
+  color: #ffffff;
+  border-color: var(--primary);
+}
+
+.btn-copy span {
+  font-size: 1rem;
 }
 
 /* ==========================================================================
@@ -628,7 +735,6 @@ header .header-button span {
   color: var(--text-dim);
 }
 
-/* Form line helpers */
 .form {
   display: flex;
   flex-direction: column;
@@ -1209,7 +1315,6 @@ header .header-button span {
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
 }
 
-/* Legacy support for transfer mockup components */
 .accounts {
   padding: 1rem;
   background: var(--bg-glass);
@@ -1272,6 +1377,11 @@ header .header-button span {
   font-weight: 700;
   font-size: 1.3rem;
   box-shadow: 0 4px 14px rgba(59, 130, 246, 0.4);
+}
+
+.auth-brand-badge span {
+  font-size: 1.5rem;
+  color: #ffffff;
 }
 
 .auth-brand h2 {
@@ -1370,8 +1480,13 @@ header .header-button span {
   align-items: center;
   justify-content: center;
   color: #fff;
-  font-size: 1.15rem;
+  font-size: 1.25rem;
   box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+}
+
+.m-logo-icon span {
+  font-size: 1.3rem;
+  color: #ffffff;
 }
 
 .m-nav-actions {
@@ -1437,6 +1552,10 @@ header .header-button span {
   font-size: 0.88rem;
   font-weight: 600;
   margin-bottom: 1.5rem;
+}
+
+.m-hero-badge span {
+  font-size: 1.1rem;
 }
 
 .m-hero-title {
@@ -1580,9 +1699,12 @@ header .header-button span {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.6rem;
   margin-bottom: 1.4rem;
   color: #60a5fa;
+}
+
+.m-feature-icon span {
+  font-size: 1.7rem;
 }
 
 .m-feature-card h3 {
@@ -1710,11 +1832,11 @@ footer {
   }
 
   .actions {
-    gap: 10px;
+    gap: 8px;
   }
 
   .actions .circle {
-    max-width: 75px;
+    max-width: 68px;
   }
 
   .actions a,
@@ -1729,7 +1851,7 @@ footer {
   }
 
   .actions .circle .text-shadow {
-    font-size: 0.78rem;
+    font-size: 0.72rem;
   }
 
   .widgets {
@@ -1835,8 +1957,8 @@ footer {
 
   .actions a,
   .actions button {
-    width: 44px;
-    height: 44px;
+    width: 42px;
+    height: 42px;
   }
 
   .preset-grid {

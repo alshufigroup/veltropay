@@ -42,7 +42,9 @@ const Signin: React.FC = () => {
       <div className='bg' />
       <div className='auth-card'>
         <div className='auth-brand'>
-          <div className='auth-brand-badge'>⚡</div>
+          <div className='auth-brand-badge'>
+            <span className='material-symbols-outlined'>bolt</span>
+          </div>
           <h2>VeltroPay</h2>
         </div>
         <p className='auth-subtitle'>
@@ -50,9 +52,7 @@ const Signin: React.FC = () => {
         </p>
 
         <form onSubmit={handleSubmit} className='auth-form'>
-          <label htmlFor='signin-email' style={{ marginBottom: '6px', fontSize: '0.88rem' }}>
-            Email Address
-          </label>
+          <label htmlFor='signin-email'>Email Address</label>
           <input
             id='signin-email'
             required
@@ -64,9 +64,7 @@ const Signin: React.FC = () => {
             className='form-control-input'
           />
 
-          <label htmlFor='signin-password' style={{ marginBottom: '6px', fontSize: '0.88rem' }}>
-            Password
-          </label>
+          <label htmlFor='signin-password'>Password</label>
           <input
             id='signin-password'
             required

@@ -41,7 +41,9 @@ const Login: React.FC = () => {
       <div className='bg' />
       <div className='auth-card'>
         <div className='auth-brand'>
-          <div className='auth-brand-badge'>⚡</div>
+          <div className='auth-brand-badge'>
+            <span className='material-symbols-outlined'>bolt</span>
+          </div>
           <h2>VeltroPay</h2>
         </div>
         <p className='auth-subtitle'>
@@ -49,9 +51,7 @@ const Login: React.FC = () => {
         </p>
 
         <form onSubmit={handleLogin} className='auth-form'>
-          <label htmlFor='login-email' style={{ marginBottom: '6px', fontSize: '0.88rem' }}>
-            Email Address
-          </label>
+          <label htmlFor='login-email'>Email Address</label>
           <input 
             id='login-email'
             type='email' 
@@ -62,9 +62,7 @@ const Login: React.FC = () => {
             className='form-control-input'
           />
 
-          <label htmlFor='login-password' style={{ marginBottom: '6px', fontSize: '0.88rem' }}>
-            Password
-          </label>
+          <label htmlFor='login-password'>Password</label>
           <input 
             id='login-password'
             type='password' 
