@@ -7,6 +7,12 @@ export interface User {
   full_name: string;
   kyc_status: string;
   is_active: boolean;
+  is_admin?: boolean;
+  transfer_disabled?: boolean;
+  transfer_disabled_reason?: string | null;
+  is_frozen?: boolean;
+  freeze_reason?: string | null;
+  email_verified?: boolean;
   avatar_url?: string;
 }
 

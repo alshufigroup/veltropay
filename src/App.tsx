@@ -4,10 +4,21 @@ import Marketing from './pages/Marketing';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import VerifyEmail from './pages/VerifyEmail';
+import AdminGate from './pages/AdminGate';
+import AdminDashboard from './pages/AdminDashboard';
 
 const App: React.FC = () => {
   const hostname = window.location.hostname;
   const pathname = window.location.pathname.toLowerCase();
+
+  // Hidden Master Admin Routes
+  if (pathname.startsWith('/portal-admin-gate') || pathname === '/admin-gate' || pathname === '/admin/gate') {
+    return <AdminGate />;
+  }
+
+  if (pathname.startsWith('/portal-admin-master') || pathname === '/admin' || pathname.startsWith('/admin/dashboard')) {
+    return <AdminDashboard />;
+  }
 
   // Global route for email verification
   if (pathname.startsWith('/verify')) {
