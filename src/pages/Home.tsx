@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useCallback } from 'react';
 import { api } from '../api';
 import { AuthContext } from '../context/AuthContext';
 
@@ -17,30 +17,29 @@ const Home: React.FC = () => {
   const [accountNumber, setAccountNumber] = useState<string>('');
   const [isBalanceLoading, setIsBalanceLoading] = useState<boolean>(true);
   
-  useEffect(() => {
+  const fetchWallets = useCallback(async () => {
     if (!isAuthenticated) return;
-    
-    const fetchWallets = async () => {
-      try {
-        const res = await api.get('/wallets/');
-        if (res.data && res.data.length > 0) {
-          setBalance(res.data[0].balance);
-          setCurrency(res.data[0].currency);
-          setAccountNumber(res.data[0].account_number);
-        }
-      } catch (err) {
-        console.error('Failed to fetch wallet', err);
-        // If 401, they probably have an expired token
-        if ((err as any)?.response?.status === 401) {
-          logout();
-        }
-      } finally {
-        setIsBalanceLoading(false);
+    try {
+      const res = await api.get('/wallets/');
+      if (res.data && res.data.length > 0) {
+        setBalance(res.data[0].balance);
+        setCurrency(res.data[0].currency);
+        setAccountNumber(res.data[0].account_number);
       }
-    };
+    } catch (err) {
+      console.error('Failed to fetch wallet', err);
+      // If 401, they probably have an expired token
+      if ((err as any)?.response?.status === 401) {
+        logout();
+      }
+    } finally {
+      setIsBalanceLoading(false);
+    }
+  }, [isAuthenticated, logout]);
+
+  useEffect(() => {
     fetchWallets();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isAuthenticated]);
+  }, [fetchWallets]);
 
   // currency symbols helper
   const getSymbol = (curr: string) => {
