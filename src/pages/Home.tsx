@@ -16,6 +16,7 @@ const Home: React.FC = () => {
   const [currency, setCurrency] = useState<string>('EUR');
   const [accountNumber, setAccountNumber] = useState<string>('');
   const [isBalanceLoading, setIsBalanceLoading] = useState<boolean>(true);
+  const [activeNotices, setActiveNotices] = useState<Array<{ id: number; title: string; message: string; notice_type: string }>>([]);
   
   const fetchWallets = useCallback(async () => {
     if (!isAuthenticated) return;
@@ -28,7 +29,6 @@ const Home: React.FC = () => {
       }
     } catch (err) {
       console.error('Failed to fetch wallet', err);
-      // If 401, they probably have an expired token
       if ((err as any)?.response?.status === 401) {
         logout();
       }
@@ -37,9 +37,29 @@ const Home: React.FC = () => {
     }
   }, [isAuthenticated, logout]);
 
+  const fetchNotices = useCallback(async () => {
+    if (!isAuthenticated) return;
+    try {
+      const res = await api.get('/auth/notices');
+      setActiveNotices(res.data || []);
+    } catch (err) {
+      // Ignore background notice fetch errors
+    }
+  }, [isAuthenticated]);
+
   useEffect(() => {
     fetchWallets();
-  }, [fetchWallets]);
+    fetchNotices();
+  }, [fetchWallets, fetchNotices]);
+
+  const dismissNotice = async (id: number) => {
+    try {
+      await api.post(`/auth/notices/${id}/read`);
+      setActiveNotices((prev) => prev.filter((n) => n.id !== id));
+    } catch (err) {
+      setActiveNotices((prev) => prev.filter((n) => n.id !== id));
+    }
+  };
 
   // currency symbols helper
   const getSymbol = (curr: string) => {
@@ -140,6 +160,60 @@ const Home: React.FC = () => {
           </div>
         </div>
       )}
+
+      {/* In-App Directives / Platform Notices */}
+      {activeNotices.map((n) => {
+        const isUrgent = n.notice_type === 'urgent';
+        const isWarning = n.notice_type === 'warning';
+        const isSuccess = n.notice_type === 'success';
+
+        const bg = isUrgent ? 'rgba(239, 68, 68, 0.16)' : isWarning ? 'rgba(245, 158, 11, 0.16)' : isSuccess ? 'rgba(16, 185, 129, 0.16)' : 'rgba(59, 130, 246, 0.16)';
+        const border = isUrgent ? 'rgba(239, 68, 68, 0.4)' : isWarning ? 'rgba(245, 158, 11, 0.4)' : isSuccess ? 'rgba(16, 185, 129, 0.4)' : 'rgba(59, 130, 246, 0.4)';
+        const color = isUrgent ? '#fca5a5' : isWarning ? '#fde68a' : isSuccess ? '#6ee7b7' : '#93c5fd';
+        const icon = isUrgent ? 'notification_important' : isWarning ? 'warning' : isSuccess ? 'verified' : 'info';
+
+        return (
+          <div
+            key={n.id}
+            style={{
+              margin: '0 20px 16px 20px',
+              background: bg,
+              border: `1px solid ${border}`,
+              borderRadius: '16px',
+              padding: '14px 18px',
+              display: 'flex',
+              alignItems: 'flex-start',
+              justifyContent: 'space-between',
+              gap: '12px',
+              color: color
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
+              <span className="material-symbols-outlined" style={{ fontSize: '22px', flexShrink: 0 }}>
+                {icon}
+              </span>
+              <div style={{ fontSize: '13px', lineHeight: '1.4' }}>
+                <div style={{ fontWeight: 700, color: '#fff', marginBottom: '2px' }}>{n.title}</div>
+                <div>{n.message}</div>
+              </div>
+            </div>
+            <button
+              onClick={() => dismissNotice(n.id)}
+              style={{
+                background: 'transparent',
+                border: 'none',
+                color: color,
+                cursor: 'pointer',
+                padding: '2px',
+                opacity: 0.8
+              }}
+              title="Dismiss Notice"
+            >
+              <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>close</span>
+            </button>
+          </div>
+        );
+      })}
 
       <Balance 
         balance={balance} 
